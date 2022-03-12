@@ -93,7 +93,6 @@ public class Wordle {
                 totalScore = round4(in, totalScore);
 
                 // Save final score to leaderboard.
-                clearScreen();
                 int ranking = 1;
                 System.out.println("Congrats on completing the Wordle game show!\n"
                         + "Your final score is: " + totalScore + " which gives you a ranking of #" + ranking + "!");
@@ -269,8 +268,10 @@ public class Wordle {
                 answer1Solved = allGuesses.size();
             if (guess.equals(answer2))
                 answer2Solved = allGuesses.size();
-            if (answer1Solved > 0 && answer2Solved > 0)
+            if (answer1Solved > 0 && answer2Solved > 0) {
+                System.out.println("Congrats, you solved both answers in " + allGuesses.size() + " guesses!");
                 break; // Exit when both answers are solved.
+            }
         }
 
         // Calculate score.
@@ -340,19 +341,37 @@ public class Wordle {
         return totalScore;
     }
 
-    private static void printColoredWord(String guess, final String answer, boolean showAnimation) {
+    public static void printColoredWord(String guess, final String answer, boolean showAnimation) {
         // This method accepts a guess and the correct answer. It will print out the
         // guess with each letter hightlighted with the appropriate color according to
         // the rules of Wordle.
         // Note that this method does not print a linebreak after the word.
         int wordLength = answer.length();
         for (int i = 0; i < wordLength; i++) {
-            if (guess.charAt(i) == answer.charAt(i)) {
-                System.out.print(GREEN + guess.charAt(i));
-            } else if (answer.contains(guess.charAt(i) + "")) {
-                System.out.print(ORANGE + guess.charAt(i));
+            char thisLetter = guess.charAt(i);
+            if (thisLetter == answer.charAt(i)) {
+                System.out.print(GREEN + thisLetter);
+            } else if (answer.contains(thisLetter + "")) {
+                if (guess.indexOf(thisLetter) == i) {
+                    // This is the first occurance of this letter in the guess
+                    if (guess.charAt(answer.indexOf(thisLetter)) != thisLetter
+                            || answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")) {
+                        // The letter at the position of the the answer and guess is not the same OR
+                        // This letter appears twice in this answer
+                        System.out.print(ORANGE + thisLetter);
+                    } else {
+                        System.out.print(WHITE + thisLetter);
+                    }
+                } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
+                        && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
+                    // This letter appears twice in this answer and this is the second occurance of
+                    // this letter in the guess
+                    System.out.print(WHITE + thisLetter);
+                } else {
+                    System.out.print(WHITE + thisLetter);
+                }
             } else {
-                System.out.print(WHITE + guess.charAt(i));
+                System.out.print(WHITE + thisLetter);
             }
             if (showAnimation) {
                 try {

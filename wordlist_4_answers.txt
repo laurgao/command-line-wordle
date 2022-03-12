@@ -29,7 +29,6 @@ Face
 Fact
 Farm
 Fear
-Fig
 File
 Film
 Fire
@@ -55,7 +54,6 @@ Hope
 Hour
 Idea
 Jack
-John
 Kind
 King
 Lack
@@ -137,8 +135,6 @@ Word
 Work
 Year
 // Four Letter Pronouns
-Dese
-Enuf
 Feel
 Hern
 Hers
@@ -146,10 +142,7 @@ Many
 Mine
 Mine
 Much
-Nada
-Nish
 None
-Nowt
 Ours
 Same
 Self
@@ -160,9 +153,6 @@ Thee
 Them
 They
 This
-Thon
-Thor
-Thou
 Thou
 Tone
 What
@@ -469,12 +459,9 @@ Wide
 Ajax
 Amid
 Anti
-Apud
-Atop
 Bout
 Chez
 Come
-Dahn
 Doon
 Down
 From
@@ -482,11 +469,7 @@ Gain
 Half
 Into
 Like
-Mang
-Mong
 Near
-Nigh
-Offa
 Onto
 Outa
 Over
@@ -513,8 +496,6 @@ Ciao
 Crud
 Damn
 Darn
-Egad
-Eina
 Fact
 Flip
 Fore

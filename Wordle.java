@@ -32,7 +32,7 @@ public class Wordle {
     public static final String BLACK = "\033[0;30m"; // BLACK
     public static final String RED = "\033[0;31m"; // RED
     public static final String GREEN = "\033[1;92m"; // GREEN
-    public static final String YELLOW = "\033[1;93m";// YELLOW
+    public static final String ORANGE = "\033[1;38;2;255;165;0m"; // ORANGE
     public static final String WHITE = "\033[1;97m"; // WHITE
 
     public static void main(String[] args) throws InterruptedException {
@@ -161,17 +161,32 @@ public class Wordle {
                     System.out.println();
                 });
             };
-            String guess = getGuess(in, 5, allWords, printCurrentScreen);
+            String guess = getGuess(in, 5, allWords, () -> {
+                clearScreen();
+                allGuesses.forEach(prevGuess -> {
+                    printColoredWord(prevGuess, answer1, false);
+                    System.out.print("                   ");
+                    printColoredWord(prevGuess, answer2, false);
+                    System.out.println();
+                });
+            });
             if (guess.equals("RQ")) {
                 System.out.println("You rage quit. The answers are: " + answer1 + " and " + answer2);
                 break;
             }
 
-            printCurrentScreen.run();
+            clearScreen();
+            allGuesses.forEach(prevGuess -> {
+                printColoredWord(prevGuess, answer1, false);
+                System.out.print("                   ");
+                printColoredWord(prevGuess, answer2, false);
+                System.out.println();
+            });
             printColoredWord(guess, answer1, true);
             System.out.print("                   ");
             printColoredWord(guess, answer2, true);
             System.out.println();
+            allGuesses.add(guess);
 
             if (guess.equals(answer1))
                 answer1Solved = true;
@@ -261,7 +276,7 @@ public class Wordle {
                 System.out.println("RULES:");
                 System.out.println("Type a 5 letter word and press enter. Each letter will be highlighted either...");
                 System.out.println(WHITE + "White: this letter does not exist in the word.");
-                System.out.println(YELLOW + "Yellow: this letter exists in the word but is not in the right location.");
+                System.out.println(ORANGE + "Orange: this letter exists in the word but is not in the right location.");
                 System.out.println(GREEN + "Green: this letter exists in the word and is in the right location.");
                 System.out.println(RESET);
                 System.out.println("Press enter to continue...");
@@ -300,7 +315,7 @@ public class Wordle {
             if (guess.charAt(i) == answer.charAt(i)) {
                 System.out.print(GREEN + guess.charAt(i));
             } else if (answer.contains(guess.charAt(i) + "")) {
-                System.out.print(YELLOW + guess.charAt(i));
+                System.out.print(ORANGE + guess.charAt(i));
             } else {
                 System.out.print(WHITE + guess.charAt(i));
             }
@@ -323,7 +338,7 @@ public class Wordle {
             guess = in.nextLine().toUpperCase();
 
             if (guess.equals("RQ"))
-                continue;
+                break;
 
             // Check that guess has correct number of characters
             if (guess.length() != wordLength) {
@@ -388,6 +403,7 @@ public class Wordle {
     }
 
     private static void leaderboardScreen(Scanner in) {
+        // Read the leaderboard file
         ArrayList<String> leaderboardEntries = new ArrayList<String>();
         try {
             BufferedReader br = new BufferedReader(
@@ -401,6 +417,8 @@ public class Wordle {
         } catch (IOException ex) {
 
         }
+
+        // Print out the leaderboard
         clearScreen();
         System.out.println("********************************************************");
         System.out.println("LEADERBOARD");

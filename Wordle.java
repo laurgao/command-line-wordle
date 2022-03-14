@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Wordle {
 
+    @FunctionalInterface
     interface VoidFunction {
         // Dummy interface for typing of functions with no inputs and no outputs
         void run();
@@ -69,7 +70,7 @@ public class Wordle {
             new Round("4-LETTER WORDLE", "You have 6 tries to guess the word.", 4),
             new Round("6-LETTER WORDLE", "You have 10 tries to guess the word.", 6),
             new Round("DOUBLE WORDLE",
-                    "You have six tries to guess two 5-letter words.\nEach guess will be used on both words simultaneously.",
+                    "You have six tries to guess two 5-letter words. Each guess will be used on both words simultaneously.",
                     5),
     };
 
@@ -178,10 +179,16 @@ public class Wordle {
                                                                 // them all out later.
         while (true) {
             String guess = getGuess(in, answer.length(), allWords,
-                    () -> allGuesses.forEach((prevGuess) -> {
-                        printColoredWord(prevGuess, answer, false);
-                        System.out.println();
-                    }));
+                    () -> {
+                        // allGuesses.forEach((prevGuess) -> {
+                        // printColoredWord(prevGuess, answer, false);
+                        // System.out.println();
+                        // });
+                        for (int i = 0; i < allGuesses.size(); i++) {
+                            printColoredWord(allGuesses.get(i), answer, false);
+                            System.out.println();
+                        }
+                    });
 
             if (guess.equals("RQ")) {
                 System.out.println("You rage quit. The answer is: " + answer);
@@ -190,10 +197,14 @@ public class Wordle {
             }
             clearScreen();
             System.out.println();
-            allGuesses.forEach((prevGuess) -> {
-                printColoredWord(prevGuess, answer, false);
+            // allGuesses.forEach((prevGuess) -> {
+            // printColoredWord(prevGuess, answer, false);
+            // System.out.println();
+            // });
+            for (int i = 0; i < allGuesses.size(); i++) {
+                printColoredWord(allGuesses.get(i), answer, false);
                 System.out.println();
-            });
+            }
             printColoredWord(guess, answer, true);
             System.out.println();
             allGuesses.add(guess);
@@ -209,7 +220,7 @@ public class Wordle {
 
     private static int round4(Scanner in, int totalScore) throws InterruptedException {
         // Double wordle
-        final String gap = "                   "; // Gap between the two wordles when they are printed out.
+        final String gap = "               "; // Gap between the two wordles when they are printed out.
 
         final ArrayList<String> possibleAnswers = getWords("./wordlist_answers.txt");
         final ArrayList<String> allWords = getWords("./wordlist_all.txt");
@@ -231,25 +242,34 @@ public class Wordle {
         int answer2Solved = 0;
 
         while (true) {
-            VoidFunction printCurrentScreen = () -> {
-                clearScreen();
-                allGuesses.forEach(prevGuess -> {
-                    printColoredWord(prevGuess, answer1, false);
+            VoidFunction recreateCurrentScreen = () -> {
+                for (int i = 0; i < allGuesses.size(); i++) {
+                    // if (answer1Solved == 0 || answer1Solved > i) {
+                    // printColoredWord(allGuesses.get(i), answer1, false);
+                    // } else {
+                    // System.out.println(" ");
+                    // }
+                    printColoredWord(allGuesses.get(i), answer1, false);
                     System.out.print(gap);
-                    printColoredWord(prevGuess, answer2, false);
+                    // if (answer1Solved == 0 || answer1Solved > i) {
+                    // printColoredWord(allGuesses.get(i), answer2, false);
+                    // } else {
+                    // System.out.println(" ");
+                    // }
+                    printColoredWord(allGuesses.get(i), answer2, false);
                     System.out.println();
-                });
+                }
             };
-            String guess = getGuess(in, 5, allWords, printCurrentScreen);
+            String guess = getGuess(in, 5, allWords, recreateCurrentScreen);
             if (guess.equals("RQ")) {
                 System.out.println("You rage quit. The answers are: " + answer1 + " and " + answer2);
                 break;
             }
 
-            clearScreen();
-            printCurrentScreen.run();
             // If an ansewr has already been solved, do not print out this guess for the
             // answer.
+            clearScreen();
+            recreateCurrentScreen.run();
             if (answer1Solved == 0) {
                 printColoredWord(guess, answer1, true);
             } else {
@@ -346,11 +366,12 @@ public class Wordle {
         // guess with each letter hightlighted with the appropriate color according to
         // the rules of Wordle.
         // Note that this method does not print a linebreak after the word.
+        String output = "";
         int wordLength = answer.length();
         for (int i = 0; i < wordLength; i++) {
             char thisLetter = guess.charAt(i);
             if (thisLetter == answer.charAt(i)) {
-                System.out.print(GREEN + thisLetter);
+                output += GREEN + thisLetter;
             } else if (answer.contains(thisLetter + "")) {
                 if (guess.indexOf(thisLetter) == i) {
                     // This is the first occurance of this letter in the guess
@@ -358,30 +379,33 @@ public class Wordle {
                             || answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")) {
                         // The letter at the position of the the answer and guess is not the same OR
                         // This letter appears twice in this answer
-                        System.out.print(ORANGE + thisLetter);
+                        output += ORANGE + thisLetter;
                     } else {
-                        System.out.print(WHITE + thisLetter);
+                        output += WHITE + thisLetter;
                     }
                 } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
                         && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
                     // This letter appears twice in this answer and this is the second occurance of
                     // this letter in the guess
-                    System.out.print(WHITE + thisLetter);
+                    output += WHITE + thisLetter;
+
                 } else {
-                    System.out.print(WHITE + thisLetter);
+                    output += WHITE + thisLetter;
+
                 }
             } else {
-                System.out.print(WHITE + thisLetter);
+                output += WHITE + thisLetter;
+
             }
-            if (showAnimation) {
-                try {
-                    Thread.sleep(400);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            // if (showAnimation) {
+            // try {
+            // Thread.sleep(400);
+            // } catch (InterruptedException e) {
+            // e.printStackTrace();
+            // }
+            // }
         }
-        System.out.print(RESET);
+        System.out.print(output + RESET);
     }
 
     private static String getGuess(Scanner in, int wordLength, ArrayList<String> words,
@@ -419,8 +443,18 @@ public class Wordle {
     }
 
     private static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        // System.out.print("\033[H\033[2J");
+        // System.out.flush();
+        // for (int i = 0; i < 30; i++) {
+        // System.out.println();
+        // }
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static int welcomeScreen(Scanner in) {

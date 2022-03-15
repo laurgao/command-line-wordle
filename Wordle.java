@@ -76,46 +76,47 @@ public class Wordle {
 
     public static void main(String[] args) throws InterruptedException {
         Scanner in = new Scanner(System.in);
+        welcomeScreen(in);
+    }
 
-        // Infinite while loop such that the program runs until the user quits
-        while (true) {
-            int round = welcomeScreen(in);
-            clearScreen();
-            System.out.println(round);
-            if (round == 0) {
-                int totalScore = 0;
-                beginRound(in, 1, false);
-                totalScore = round1(in, totalScore);
-                beginRound(in, 2, true);
-                totalScore = round2(in, totalScore);
-                beginRound(in, 3, true);
-                totalScore = round3(in, totalScore);
-                beginRound(in, 4, true);
-                totalScore = round4(in, totalScore);
+    public static void beginGame(Scanner in) throws InterruptedException {
+        clearScreen();
+        int totalScore = 0;
+        beginRound(in, 1, false);
+        totalScore = round1(in, totalScore);
+        beginRound(in, 2, true);
+        totalScore = round2(in, totalScore);
+        beginRound(in, 3, true);
+        totalScore = round3(in, totalScore);
+        beginRound(in, 4, true);
+        totalScore = round4(in, totalScore);
 
-                // Save final score to leaderboard.
-                int ranking = 1;
-                System.out.println("Congrats on completing the Wordle game show!\n"
-                        + "Your final score is: " + totalScore + " which gives you a ranking of #" + ranking + "!");
-                System.out.println("Enter your name to save your score to the leaderboard: ");
-                String name = in.nextLine();
-                saveScore(name, totalScore);
-                System.out.println();
-                System.out.println("Thank you for playing, " + name + "! Press enter to return to the main menu.");
-                in.nextLine();
-            } else {
-                beginRound(in, round, false);
-                if (round == 1) {
-                    round1(in, 0);
-                } else if (round == 2) {
-                    round2(in, 0);
-                } else if (round == 3) {
-                    round3(in, 0);
-                } else {
-                    round4(in, 0);
-                }
-            }
+        // Save final score to leaderboard.
+        int ranking = 1;
+        System.out.println("Congrats on completing the Wordle game show!\n"
+                + "Your final score is: " + totalScore + " which gives you a ranking of #" + ranking + "!");
+        System.out.println("Enter your name to save your score to the leaderboard: ");
+        String name = in.nextLine();
+        saveScore(name, totalScore);
+        System.out.println();
+        System.out.println("Thank you for playing, " + name + "! Press enter to return to the main menu.");
+        in.nextLine();
+
+        welcomeScreen(in);
+    }
+
+    private static void playSpecificRound(Scanner in, int round) throws InterruptedException {
+        beginRound(in, round, false);
+        if (round == 1) {
+            round1(in, 0);
+        } else if (round == 2) {
+            round2(in, 0);
+        } else if (round == 3) {
+            round3(in, 0);
+        } else {
+            round4(in, 0);
         }
+        welcomeScreen(in);
     }
 
     private static void beginRound(Scanner in, int roundIndex, boolean skipRules) {
@@ -243,20 +244,20 @@ public class Wordle {
 
         while (true) {
             VoidFunction recreateCurrentScreen = () -> {
+                boolean ans1solved = false;
+                boolean ans2solved = false;
                 for (int i = 0; i < allGuesses.size(); i++) {
-                    // if (answer1Solved == 0 || answer1Solved > i) {
-                    // printColoredWord(allGuesses.get(i), answer1, false);
-                    // } else {
-                    // System.out.println(" ");
-                    // }
-                    printColoredWord(allGuesses.get(i), answer1, false);
+                    if (!ans1solved) {
+                        printColoredWord(allGuesses.get(i), answer1, false);
+                        ans1solved = answer1.equals(allGuesses.get(i));
+                    } else {
+                        System.out.print("     ");
+                    }
                     System.out.print(gap);
-                    // if (answer1Solved == 0 || answer1Solved > i) {
-                    // printColoredWord(allGuesses.get(i), answer2, false);
-                    // } else {
-                    // System.out.println(" ");
-                    // }
-                    printColoredWord(allGuesses.get(i), answer2, false);
+                    if (!ans2solved) {
+                        printColoredWord(allGuesses.get(i), answer2, false);
+                        ans2solved = answer2.equals(allGuesses.get(i));
+                    }
                     System.out.println();
                 }
             };
@@ -266,20 +267,18 @@ public class Wordle {
                 break;
             }
 
-            // If an ansewr has already been solved, do not print out this guess for the
+            // If an answer has already been solved, do not print out this guess for the
             // answer.
             clearScreen();
             recreateCurrentScreen.run();
             if (answer1Solved == 0) {
                 printColoredWord(guess, answer1, true);
             } else {
-                System.out.println("     ");
+                System.out.print("     ");
             }
             System.out.print(gap);
             if (answer2Solved == 0) {
                 printColoredWord(guess, answer2, true);
-            } else {
-                System.out.println("     ");
             }
             System.out.println();
             allGuesses.add(guess);
@@ -424,7 +423,6 @@ public class Wordle {
                 System.out.println(RED + "Please enter a word of length " + wordLength + RESET);
                 System.out.println();
                 recreateCurrentScreen.run();
-
                 continue;
             }
 
@@ -436,18 +434,12 @@ public class Wordle {
                 recreateCurrentScreen.run();
                 continue;
             }
-
             break;
         }
         return guess;
     }
 
     private static void clearScreen() {
-        // System.out.print("\033[H\033[2J");
-        // System.out.flush();
-        // for (int i = 0; i < 30; i++) {
-        // System.out.println();
-        // }
         try {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         } catch (InterruptedException e) {
@@ -457,7 +449,7 @@ public class Wordle {
         }
     }
 
-    private static int welcomeScreen(Scanner in) {
+    private static void welcomeScreen(Scanner in) throws InterruptedException {
         clearScreen();
         System.out.println("********************************************************");
         System.out.println("WELCOME TO THE WORLD'S FIRST WORDLE GAME SHOW!");
@@ -475,13 +467,13 @@ public class Wordle {
         while (true) {
             String input = in.nextLine();
             if (input.toUpperCase().equals("S")) {
-                return 0;
+                beginGame(in);
             } else if (input.toUpperCase().equals("Q")) {
                 System.out.println("Bye bye!");
                 System.exit(0);
             } else if (input.toUpperCase().equals("C")) {
                 clearScreen();
-                return roundsScreen(in);
+                roundsScreen(in);
             } else if (input.toUpperCase().equals("L")) {
                 leaderboardScreen(in);
             } else {
@@ -490,7 +482,7 @@ public class Wordle {
         }
     }
 
-    private static void leaderboardScreen(Scanner in) {
+    private static void leaderboardScreen(Scanner in) throws InterruptedException {
         // Read the leaderboard file
         ArrayList<String> leaderboardEntries = new ArrayList<String>();
         try {
@@ -539,7 +531,7 @@ public class Wordle {
         }
     }
 
-    private static int roundsScreen(Scanner in) {
+    private static void roundsScreen(Scanner in) throws InterruptedException {
         final String rounds = "1234";
         System.out.println("ROUNDS:");
         System.out.println("1 - Classic 5-letter Wordle");
@@ -558,7 +550,7 @@ public class Wordle {
         String round = in.nextLine();
         while (true) {
             if (round.length() == 1 && rounds.indexOf(round) > -1) {
-                return Integer.parseInt(round);
+                playSpecificRound(in, Integer.parseInt(round));
             } else if (round.toUpperCase().equals("R")) {
                 welcomeScreen(in);
             } else {

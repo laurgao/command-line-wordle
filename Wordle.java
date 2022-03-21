@@ -75,15 +75,12 @@ public class Wordle {
 
     // Text colors
     public static final String RESET = "\033[0m"; // Text reset (clears all styles that have been applied)
-    public static final String BLACK = "\033[0;30m";
     public static final String RED = "\033[0;31m";
     public static final String GREEN = "\033[1;92m";
     public static final String ORANGE = "\033[1;38;2;255;165;0m";
     public static final String WHITE = "\033[1;97m";
 
-    // Each entry of the 2D array represents a round.
-    // Each entry of each nested array is [name of round, description of round,
-    // number of letters in this word's round]
+    // This array stores data about all the rounds.
     private static final Round[] ROUNDS = {
             new Round("CLASSIC WORDLE", "You will be given a 5-letter word and you must guess it within 6 tries.", 5),
             new Round("4-LETTER WORDLE", "You have 6 tries to guess the word.", 4),
@@ -165,12 +162,17 @@ public class Wordle {
         System.out.println("ROUND " + roundIndex + ": " + round.getName());
         System.out.println();
         System.out.println(round.getDescription());
-        System.out.println("If you don't get the word in the allotted number of guesses, you will not get any points.");
+        if (!skipRules)
+            System.out.println(
+                    "If you don't get the word in the allotted number of guesses, you will not get any points.");
+        System.out.println();
+        System.out.println(
+                "For your viewing pleasure, it is recommended that this game is played in a console whose background colour is dark.");
         System.out.println();
         if (!skipRules) {
             System.out.println();
             System.out.println("Press enter to continue...");
-            System.out.println("If you already know how to play Wordle, enter 'S' to skip the rules.");
+            System.out.println("(If you already know how to play Wordle, enter 'S' to skip the rules.)");
             System.out.println();
             while (true) {
                 String input = in.nextLine();
@@ -178,13 +180,16 @@ public class Wordle {
                     break;
                 } else {
                     // Print wordle rules
+                    clearScreen();
                     System.out.println("RULES:");
+                    System.out.println();
                     System.out
                             .println(
                                     "Type a "
                                             + (round.getNumLetters() > 0 ? round.getNumLetters() + "-letter word"
                                                     : "word")
                                             + " and press enter. Each letter will be highlighted either...");
+                    System.out.println();
                     System.out.println(WHITE + "White: this letter does not exist in the word.");
                     System.out.println(
                             ORANGE + "Orange: this letter exists in the word but is not in the right location.");

@@ -67,7 +67,6 @@ Lord
 Loss
 Love
 Mark
-Mary
 Mind
 Miss
 Move
@@ -82,7 +81,6 @@ Park
 Part
 Past
 Path
-Paul
 Plan
 Play
 Post
@@ -136,7 +134,6 @@ Work
 Year
 // Four Letter Pronouns
 Feel
-Hern
 Hers
 Many
 Mine
@@ -158,7 +155,6 @@ Tone
 What
 When
 Whom
-Yere
 Your
 // Four Letter Verbs
 Bear
@@ -368,7 +364,6 @@ Then
 Thin
 Tidy
 Tiny
-Tory
 True
 Ugly
 Vain
@@ -392,7 +387,6 @@ Once
 Only
 Plus
 Save
-Sith
 Than
 That
 Then
@@ -456,13 +450,10 @@ Very
 When
 Wide
 // Four Letter Prepositions
-Ajax
 Amid
 Anti
 Bout
-Chez
 Come
-Doon
 Down
 From
 Gain
@@ -471,13 +462,11 @@ Into
 Like
 Near
 Onto
-Outa
 Over
 Past
 Post
 Save
 Than
-Thro
 Thru
 Till
 Unto
@@ -492,7 +481,6 @@ Alas
 Amen
 Bang
 Blah
-Ciao
 Crud
 Damn
 Darn
@@ -503,35 +491,23 @@ Gosh
 Heck
 Hell
 Here
-Hist
-Hiya
-Hmmm
-Hmph
 Honk
-Hunh
 Jeez
 Jinx
 Like
 Lord
 Meow
-Mwah
-Nome
-Nyet
 Okay
 Oops
 Ouch
 Phew
-Phut
 Poof
 Pooh
-Pugh
 Shoo
 Snap
 Stop
 Sure
-Tara
 This
-Urgh
 Wall
 Waly
 Wham

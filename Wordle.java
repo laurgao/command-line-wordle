@@ -116,9 +116,9 @@ public class Wordle {
         totalScore = round5(in, totalScore);
 
         // Save final score to leaderboard.
-        int ranking = 1;
+        int rank = getRank(totalScore);
         System.out.println("Congrats on completing the Wordle game show!\n"
-                + "Your final score is: " + totalScore + " which gives you a ranking of #" + ranking + "!");
+                + "Your final score is: " + totalScore + " which gives you a ranking of #" + rank + "!");
         System.out.println("Enter your name to save your score to the leaderboard: ");
         String name = in.nextLine();
         saveScore(name, totalScore);
@@ -127,6 +127,20 @@ public class Wordle {
         in.nextLine();
 
         welcomeScreen(in);
+    }
+
+    private static int getRank(int score) {
+        // Returns the rank of the player based on their score, according to the
+        // leaderboard.
+        ArrayList<LeaderboardEntry> leaderboardData = getLeaderboardData();
+        for (int i = 0; i < leaderboardData.size(); i++) {
+            if (score >= leaderboardData.get(i).getScore()) {
+                return i + 1;
+            }
+        }
+        // If the code makes it here, the player's score is lower than all the scores on
+        // the leaderboard.
+        return leaderboardData.size() + 1;
     }
 
     private static void playSpecificRound(Scanner in, int round) {
@@ -525,6 +539,7 @@ public class Wordle {
                 beginGame(in);
             } else if (input.toUpperCase().equals("Q")) {
                 System.out.println("Bye bye!");
+                in.close();
                 System.exit(0);
             } else if (input.toUpperCase().equals("C")) {
                 clearScreen();
@@ -562,6 +577,9 @@ public class Wordle {
             // If the file doesn't exist, then there are no entries on the leaderboard,
             // and we will return an empty ArrayList.
         }
+        // Sort the leaderboard entries according to score
+        leaderboardEntries.sort((player1, player2) -> player2.getScore() - player1.getScore());
+
         return leaderboardEntries;
     }
 
@@ -570,17 +588,17 @@ public class Wordle {
 
         // Print out the leaderboard
         clearScreen();
-        System.out.println("********************************************************");
         System.out.println("LEADERBOARD");
         System.out.println();
         if (leaderboardEntries.size() == 0) {
             System.out.println("No one has beat the game yet. Do you want to be the first? ;)");
         } else {
             System.out.println("RANK\tNAME\tSCORE");
+            System.out.println("********************************************************");
             for (int i = 0; i < leaderboardEntries.size(); i++) {
                 int rank = i + 1;
-                String name = leaderboardEntries.get(i).name;
-                int score = leaderboardEntries.get(i).score;
+                String name = leaderboardEntries.get(i).getName();
+                int score = leaderboardEntries.get(i).getScore();
                 System.out.println(rank + "\t" + name + "\t" + score);
             }
         }

@@ -33,7 +33,7 @@ public class Wordle {
         // Data class to store information about a round.
         private final String name;
         private final String description;
-        private final int numLetters;
+        private final int numLetters; // 0 if length of different words is different
 
         public Round(String name, String description, int numLetters) {
             this.name = name;
@@ -72,7 +72,7 @@ public class Wordle {
             new Round("DOUBLE WORDLE",
                     "You have six tries to guess two 5-letter words. Each guess will be used on both words simultaneously.",
                     5),
-            new Round("SPECIAL EDITION: JAVA KEYWORDS",
+            new Round("SPECIAL EDITION - JAVA KEYWORDS",
                     "The answer of this special round will be one of the 67 possible Java reserved words. You will have 6 tries to guess it. You do not know how many letters the answer contains.",
                     0),
     };
@@ -147,8 +147,11 @@ public class Wordle {
                     // Print wordle rules
                     System.out.println("RULES:");
                     System.out
-                            .println("Type a " + round.getNumLetters()
-                                    + " letter word and press enter. Each letter will be highlighted either...");
+                            .println(
+                                    "Type a "
+                                            + (round.getNumLetters() > 0 ? round.getNumLetters() + "-letter word"
+                                                    : "word")
+                                            + " and press enter. Each letter will be highlighted either...");
                     System.out.println(WHITE + "White: this letter does not exist in the word.");
                     System.out.println(
                             ORANGE + "Orange: this letter exists in the word but is not in the right location.");
@@ -179,14 +182,20 @@ public class Wordle {
         }
     }
 
-    private static MyResult mainWordle(Scanner in, final String answer, ArrayList<String> allWords) {
+    private static MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords) {
+        // Overload variant of `mainWordle` where the number of letters is simply the
+        // length of the answer.
+        return mainWordle(in, answer, allWords, answer.length());
+    }
+
+    private static MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
         // This method carries out the logic of a single wordle game (the UI of the user
         // guessing.)
         boolean successful = false;
         ArrayList<String> allGuesses = new ArrayList<String>(); // Store all guesses in a variable so we can print
                                                                 // them all out later.
         while (true) {
-            String guess = getGuess(in, answer.length(), allWords,
+            String guess = getGuess(in, numLetters, allWords,
                     () -> {
                         // allGuesses.forEach((prevGuess) -> {
                         // printColoredWord(prevGuess, answer, false);
@@ -229,38 +238,10 @@ public class Wordle {
     private static int round5(Scanner in, int totalScore) {
         final ArrayList<String> allWords = getWords("./wordlist_java_keywords.txt");
         final String answer = allWords.get((int) (Math.random() * allWords.size()));
-        ArrayList<String> allGuesses = new ArrayList<String>();
 
-        boolean successful = false;
-        while (true) {
-            String guess = getGuess(in, 0, allWords,
-                    () -> {
-                        for (int i = 0; i < allGuesses.size(); i++) {
-                            printColoredWord(allGuesses.get(i), answer, false);
-                            System.out.println();
-                        }
-                    });
-
-            if (guess.equals("RQ")) {
-                System.out.println("You rage quit. The answer is: " + answer);
-                successful = false;
-                break;
-            }
-            clearScreen();
-            System.out.println();
-            for (int i = 0; i < allGuesses.size(); i++) {
-                printColoredWord(allGuesses.get(i), answer, false);
-                System.out.println();
-            }
-            printColoredWord(guess, answer, true);
-            System.out.println();
-            allGuesses.add(guess);
-            if (guess.equals(answer)) {
-                System.out.println("Heck yea, you got the correct answer in " + allGuesses.size() + " guesses!");
-                successful = true;
-                break;
-            }
-        }
+        MyResult result = mainWordle(in, answer, allWords, 0);
+        ArrayList<String> allGuesses = result.getFirst();
+        boolean successful = result.getSecond();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
         totalScore += newPoints;
@@ -424,18 +405,19 @@ public class Wordle {
                 if (thisLetter == answer.charAt(i)) {
                     output += GREEN + thisLetter;
                 } else if (answer.contains(thisLetter + "")) {
+                    int index = answer.indexOf(thisLetter);
                     if (guess.indexOf(thisLetter) == i) {
                         // This is the first occurance of this letter in the guess
-                        if (guess.charAt(answer.indexOf(thisLetter)) != thisLetter
-                                || answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")) {
+                        if (guess.length() <= index || guess.charAt(index) != thisLetter
+                                || answer.substring(index + 1).contains(thisLetter + "")) {
                             // The letter at the position of the the answer and guess is not the same OR
                             // This letter appears twice in this answer
                             output += ORANGE + thisLetter;
                         } else {
                             output += WHITE + thisLetter;
                         }
-                    } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
-                            && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
+                    } else if (answer.substring(index + 1).contains(thisLetter + "")
+                            && answer.substring(index + 1).indexOf(thisLetter) == i) {
                         // This letter appears twice in this answer and this is the second occurance of
                         // this letter in the guess
                         output += WHITE + thisLetter;

@@ -1,3 +1,4 @@
+// This wordlist is from Emily/Akshaya
 aahing
 aaliis
 aarrgh

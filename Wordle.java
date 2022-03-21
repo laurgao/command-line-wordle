@@ -29,6 +29,25 @@ public class Wordle {
         }
     }
 
+    final static class LeaderboardEntry {
+        // Data class to store information about a leaderboard entry.
+        private final String name;
+        private final int score;
+
+        public LeaderboardEntry(String name, int score) {
+            this.name = name;
+            this.score = score;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getScore() {
+            return score;
+        }
+    }
+
     final static class Round {
         // Data class to store information about a round.
         private final String name;
@@ -178,7 +197,9 @@ public class Wordle {
             out.println(name + " " + score);
             out.close();
         } catch (IOException e) {
-            System.out.println("Error saving score to leaderboard.");
+            System.out.println();
+            System.out.println(RED + "Error saving score to leaderboard." + RESET);
+            System.out.println();
         }
     }
 
@@ -197,10 +218,6 @@ public class Wordle {
         while (true) {
             String guess = getGuess(in, numLetters, allWords,
                     () -> {
-                        // allGuesses.forEach((prevGuess) -> {
-                        // printColoredWord(prevGuess, answer, false);
-                        // System.out.println();
-                        // });
                         for (int i = 0; i < allGuesses.size(); i++) {
                             printColoredWord(allGuesses.get(i), answer, false);
                             System.out.println();
@@ -214,10 +231,6 @@ public class Wordle {
             }
             clearScreen();
             System.out.println();
-            // allGuesses.forEach((prevGuess) -> {
-            // printColoredWord(prevGuess, answer, false);
-            // System.out.println();
-            // });
             for (int i = 0; i < allGuesses.size(); i++) {
                 printColoredWord(allGuesses.get(i), answer, false);
                 System.out.println();
@@ -524,21 +537,36 @@ public class Wordle {
         }
     }
 
-    private static void leaderboardScreen(Scanner in) {
-        // Read the leaderboard file
-        ArrayList<String> leaderboardEntries = new ArrayList<String>();
+    private static ArrayList<LeaderboardEntry> getLeaderboardData() {
+        ArrayList<LeaderboardEntry> leaderboardEntries = new ArrayList<LeaderboardEntry>();
         try {
+            // Read the leaderboard file
             BufferedReader br = new BufferedReader(
                     new FileReader("./leaderboard.txt"));
 
             String s;
             while ((s = br.readLine()) != null) {
-                leaderboardEntries.add(s);
+                final String name = s.split(" ")[0];
+                final int score;
+                try {
+                    String scoreStr = s.split(" ")[1];
+                    score = Integer.parseInt(scoreStr);
+                } catch (NumberFormatException e) {
+                    // This is not a valid score, so we skip this line of the file.
+                    continue;
+                }
+                leaderboardEntries.add(new LeaderboardEntry(name, score));
             }
             br.close();
         } catch (IOException ex) {
-
+            // If the file doesn't exist, then there are no entries on the leaderboard,
+            // and we will return an empty ArrayList.
         }
+        return leaderboardEntries;
+    }
+
+    private static void leaderboardScreen(Scanner in) {
+        ArrayList<LeaderboardEntry> leaderboardEntries = getLeaderboardData();
 
         // Print out the leaderboard
         clearScreen();
@@ -551,14 +579,13 @@ public class Wordle {
             System.out.println("RANK\tNAME\tSCORE");
             for (int i = 0; i < leaderboardEntries.size(); i++) {
                 int rank = i + 1;
-                String name = leaderboardEntries.get(i).split(" ")[0];
-                String score = leaderboardEntries.get(i).split(" ")[1];
+                String name = leaderboardEntries.get(i).name;
+                int score = leaderboardEntries.get(i).score;
                 System.out.println(rank + "\t" + name + "\t" + score);
             }
         }
         System.out.println();
         System.out.println("********************************************************");
-        System.out.println();
         System.out.println();
         System.out.println();
         System.out.println("Press 'R' to return to the main menu.");

@@ -77,12 +77,12 @@ public class Wordle {
                     0),
     };
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         welcomeScreen(in);
     }
 
-    public static void beginGame(Scanner in) throws InterruptedException {
+    public static void beginGame(Scanner in) {
         clearScreen();
         int totalScore = 0;
         beginRound(in, 1, false);
@@ -110,7 +110,7 @@ public class Wordle {
         welcomeScreen(in);
     }
 
-    private static void playSpecificRound(Scanner in, int round) throws InterruptedException {
+    private static void playSpecificRound(Scanner in, int round) {
         beginRound(in, round, false);
         if (round == 1) {
             round1(in, 0);
@@ -179,8 +179,7 @@ public class Wordle {
         }
     }
 
-    private static MyResult mainWordle(Scanner in, final String answer, ArrayList<String> allWords)
-            throws InterruptedException {
+    private static MyResult mainWordle(Scanner in, final String answer, ArrayList<String> allWords) {
         // This method carries out the logic of a single wordle game (the UI of the user
         // guessing.)
         boolean successful = false;
@@ -269,12 +268,12 @@ public class Wordle {
         return totalScore;
     }
 
-    private static int round4(Scanner in, int totalScore) throws InterruptedException {
+    private static int round4(Scanner in, int totalScore) {
         // Double wordle
         final String gap = "               "; // Gap between the two wordles when they are printed out.
 
-        final ArrayList<String> possibleAnswers = getWords("./wordlist_answers.txt");
-        final ArrayList<String> allWords = getWords("./wordlist_all.txt");
+        final ArrayList<String> possibleAnswers = getWords("./wordlist_5_answers.txt");
+        final ArrayList<String> allWords = getWords("./wordlist_5_all.txt");
         final String answer1 = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
         final String answer2;
         String s;
@@ -362,7 +361,7 @@ public class Wordle {
         return totalScore;
     }
 
-    private static int round3(Scanner in, int totalScore) throws InterruptedException {
+    private static int round3(Scanner in, int totalScore) {
         // 6 letter words
 
         final ArrayList<String> allWords = getWords("./wordlist_6_all.txt");
@@ -380,7 +379,7 @@ public class Wordle {
 
     }
 
-    private static int round2(Scanner in, int totalScore) throws InterruptedException {
+    private static int round2(Scanner in, int totalScore) {
 
         final ArrayList<String> words_possible_ansnwers = getWords("./wordlist_4_answers.txt");
         final ArrayList<String> allWords = getWords("./wordlist_4_all.txt");
@@ -396,9 +395,9 @@ public class Wordle {
 
     }
 
-    private static int round1(Scanner in, int totalScore) throws InterruptedException {
-        final ArrayList<String> possibleAnswers = getWords("./wordlist_answers.txt");
-        final ArrayList<String> allWords = getWords("./wordlist_all.txt");
+    private static int round1(Scanner in, int totalScore) {
+        final ArrayList<String> possibleAnswers = getWords("./wordlist_5_answers.txt");
+        final ArrayList<String> allWords = getWords("./wordlist_5_all.txt");
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
 
         MyResult result = mainWordle(in, answer, allWords);
@@ -510,7 +509,7 @@ public class Wordle {
         }
     }
 
-    private static void welcomeScreen(Scanner in) throws InterruptedException {
+    private static void welcomeScreen(Scanner in) {
         clearScreen();
         System.out.println("********************************************************");
         System.out.println("WELCOME TO THE WORLD'S FIRST WORDLE GAME SHOW!");
@@ -543,7 +542,7 @@ public class Wordle {
         }
     }
 
-    private static void leaderboardScreen(Scanner in) throws InterruptedException {
+    private static void leaderboardScreen(Scanner in) {
         // Read the leaderboard file
         ArrayList<String> leaderboardEntries = new ArrayList<String>();
         try {
@@ -592,7 +591,7 @@ public class Wordle {
         }
     }
 
-    private static void roundsScreen(Scanner in) throws InterruptedException {
+    private static void roundsScreen(Scanner in) {
         final String rounds = "12345";
         System.out.println("ROUNDS:");
         System.out.println("1 - Classic 5-letter Wordle");

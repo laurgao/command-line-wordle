@@ -5,4 +5,4 @@ Laura 1600
 Laura 2200
 ahmed 1500
 SuLaMa 3000
-f 0
+collen 800

@@ -72,6 +72,9 @@ public class Wordle {
             new Round("DOUBLE WORDLE",
                     "You have six tries to guess two 5-letter words. Each guess will be used on both words simultaneously.",
                     5),
+            new Round("SPECIAL EDITION: JAVA KEYWORDS",
+                    "The answer of this special round will be one of the 67 possible Java reserved words. You will have 6 tries to guess it. You do not know how many letters the answer contains.",
+                    0),
     };
 
     public static void main(String[] args) throws InterruptedException {
@@ -90,6 +93,8 @@ public class Wordle {
         totalScore = round3(in, totalScore);
         beginRound(in, 4, true);
         totalScore = round4(in, totalScore);
+        beginRound(in, 5, true);
+        totalScore = round5(in, totalScore);
 
         // Save final score to leaderboard.
         int ranking = 1;
@@ -113,8 +118,10 @@ public class Wordle {
             round2(in, 0);
         } else if (round == 3) {
             round3(in, 0);
-        } else {
+        } else if (round == 4) {
             round4(in, 0);
+        } else {
+            round5(in, 0);
         }
         welcomeScreen(in);
     }
@@ -125,6 +132,7 @@ public class Wordle {
         System.out.println("ROUND " + roundIndex + ": " + round.getName());
         System.out.println();
         System.out.println(round.getDescription());
+        System.out.println("If you don't get the word in the allotted number of guesses, you will not get any points.");
         System.out.println();
         if (!skipRules) {
             System.out.println();
@@ -217,6 +225,48 @@ public class Wordle {
         }
 
         return new MyResult(allGuesses, successful);
+    }
+
+    private static int round5(Scanner in, int totalScore) {
+        final ArrayList<String> allWords = getWords("./wordlist_java_keywords.txt");
+        final String answer = allWords.get((int) (Math.random() * allWords.size()));
+        ArrayList<String> allGuesses = new ArrayList<String>();
+
+        boolean successful = false;
+        while (true) {
+            String guess = getGuess(in, 0, allWords,
+                    () -> {
+                        for (int i = 0; i < allGuesses.size(); i++) {
+                            printColoredWord(allGuesses.get(i), answer, false);
+                            System.out.println();
+                        }
+                    });
+
+            if (guess.equals("RQ")) {
+                System.out.println("You rage quit. The answer is: " + answer);
+                successful = false;
+                break;
+            }
+            clearScreen();
+            System.out.println();
+            for (int i = 0; i < allGuesses.size(); i++) {
+                printColoredWord(allGuesses.get(i), answer, false);
+                System.out.println();
+            }
+            printColoredWord(guess, answer, true);
+            System.out.println();
+            allGuesses.add(guess);
+            if (guess.equals(answer)) {
+                System.out.println("Heck yea, you got the correct answer in " + allGuesses.size() + " guesses!");
+                successful = true;
+                break;
+            }
+        }
+
+        int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
+        totalScore += newPoints;
+        finishRound(newPoints, totalScore, in);
+        return totalScore;
     }
 
     private static int round4(Scanner in, int totalScore) throws InterruptedException {
@@ -315,10 +365,11 @@ public class Wordle {
     private static int round3(Scanner in, int totalScore) throws InterruptedException {
         // 6 letter words
 
-        final ArrayList<String> words = getWords("./wordlist_6_all.txt");
-        final String answer = words.get((int) (Math.random() * words.size()));
+        final ArrayList<String> allWords = getWords("./wordlist_6_all.txt");
+        final ArrayList<String> possibleAnswers = getWords("./wordlist_6_answers.txt");
+        final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
 
-        MyResult result = mainWordle(in, answer, words);
+        MyResult result = mainWordle(in, answer, allWords);
         ArrayList<String> allGuesses = result.getFirst();
         boolean successful = result.getSecond();
 
@@ -366,50 +417,60 @@ public class Wordle {
         // the rules of Wordle.
         // Note that this method does not print a linebreak after the word.
         String output = "";
-        int wordLength = answer.length();
+        int wordLength = guess.length();
+        int answerLength = answer.length();
         for (int i = 0; i < wordLength; i++) {
             char thisLetter = guess.charAt(i);
-            if (thisLetter == answer.charAt(i)) {
-                output += GREEN + thisLetter;
-            } else if (answer.contains(thisLetter + "")) {
-                if (guess.indexOf(thisLetter) == i) {
-                    // This is the first occurance of this letter in the guess
-                    if (guess.charAt(answer.indexOf(thisLetter)) != thisLetter
-                            || answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")) {
-                        // The letter at the position of the the answer and guess is not the same OR
-                        // This letter appears twice in this answer
-                        output += ORANGE + thisLetter;
+            if (i < answerLength) {
+                if (thisLetter == answer.charAt(i)) {
+                    output += GREEN + thisLetter;
+                } else if (answer.contains(thisLetter + "")) {
+                    if (guess.indexOf(thisLetter) == i) {
+                        // This is the first occurance of this letter in the guess
+                        if (guess.charAt(answer.indexOf(thisLetter)) != thisLetter
+                                || answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")) {
+                            // The letter at the position of the the answer and guess is not the same OR
+                            // This letter appears twice in this answer
+                            output += ORANGE + thisLetter;
+                        } else {
+                            output += WHITE + thisLetter;
+                        }
+                    } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
+                            && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
+                        // This letter appears twice in this answer and this is the second occurance of
+                        // this letter in the guess
+                        output += WHITE + thisLetter;
                     } else {
                         output += WHITE + thisLetter;
                     }
-                } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
-                        && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
-                    // This letter appears twice in this answer and this is the second occurance of
-                    // this letter in the guess
-                    output += WHITE + thisLetter;
-
                 } else {
                     output += WHITE + thisLetter;
-
                 }
             } else {
-                output += WHITE + thisLetter;
-
+                // If the guess is longer than the answer, then we don't need to worry about any
+                // letter being green.
+                if (answer.contains(thisLetter + "")) {
+                    if (guess.indexOf(thisLetter) == i) {
+                        // This is the first occurance of this letter in the guess
+                        output += ORANGE + thisLetter;
+                    } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
+                            && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
+                        // This letter appears twice in this answer and this is the second occurance of
+                        // this letter in the guess
+                        output += WHITE + thisLetter;
+                    } else {
+                        output += WHITE + thisLetter;
+                    }
+                } else {
+                    output += WHITE + thisLetter;
+                }
             }
-            // if (showAnimation) {
-            // try {
-            // Thread.sleep(400);
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
-            // }
         }
         System.out.print(output + RESET);
     }
 
     private static String getGuess(Scanner in, int wordLength, ArrayList<String> words,
-            VoidFunction recreateCurrentScreen)
-            throws InterruptedException {
+            VoidFunction recreateCurrentScreen) {
         String guess;
         while (true) {
             guess = in.nextLine().toUpperCase();
@@ -418,7 +479,7 @@ public class Wordle {
                 break;
 
             // Check that guess has correct number of characters
-            if (guess.length() != wordLength) {
+            if (wordLength > 0 && guess.length() != wordLength) {
                 clearScreen();
                 System.out.println(RED + "Please enter a word of length " + wordLength + RESET);
                 System.out.println();
@@ -532,12 +593,13 @@ public class Wordle {
     }
 
     private static void roundsScreen(Scanner in) throws InterruptedException {
-        final String rounds = "1234";
+        final String rounds = "12345";
         System.out.println("ROUNDS:");
         System.out.println("1 - Classic 5-letter Wordle");
         System.out.println("2 - 4-letter Wordle");
         System.out.println("3 - 6-letter Wordle");
         System.out.println("4 - Double Wordle");
+        System.out.println("5 - Special edition: Wordle with Java keywords");
         System.out.println();
 
         System.out.println(

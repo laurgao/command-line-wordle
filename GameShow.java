@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Wordle {
+public class GameShow {
     private static final WordleRound[] ROUNDS = {
             new Round1(),
             new Round2(),

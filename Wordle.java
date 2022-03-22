@@ -139,7 +139,8 @@ abstract class WordleRound {
             System.out.println(
                     "You can type 'RQ' to rage quit the current level and skip to the next level at any time.");
         }
-        System.out.println("Enter your first guess:");
+        Utils.sleep(1000);
+        Utils.prettyPrint("Enter your first guess:");
         System.out.println();
     }
 

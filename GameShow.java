@@ -136,9 +136,14 @@ public class GameShow {
         Utils.sleep(pause);
         System.out.println();
         Utils.prettyPrint(
-                "Thanks to the following people for playtesting and for their valuable feedback: ", false);
+                "Thank you to the following people for playtesting and for their valuable feedback: ", false);
         Utils.sleep(pause);
-        Utils.prettyPrint("Emma, Colleen, Ahmed, Emily, Susie, Quan, and Gloria.");
+        String names[] = { "Emma", "Colleen", "Ahmed", "Quan", "Susie", "Emily", "Gloria", "Rain" };
+        for (int i = 0; i < names.length - 1; i++) {
+            Utils.prettyPrint(names[i] + ", ", false);
+            Utils.sleep(250);
+        }
+        Utils.prettyPrint("and " + names[names.length - 1] + ".", false);
         Utils.sleep(pause);
         System.out.println();
         System.out.println();

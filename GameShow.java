@@ -28,13 +28,14 @@ public class GameShow {
         Utils.clearScreen();
         int totalScore = 0;
         int numRounds = ROUNDS.length;
+        // Loop through and play all the rounds. Only display rules on the first round.
         WordleRound round1 = ROUNDS[0];
         round1.begin(in, 1, false);
         totalScore = round1.play(in, totalScore, true);
         for (int i = 2; i < numRounds + 1; i++) {
-            WordleRound round = ROUNDS[i - 1];
-            round.begin(in, i, true);
-            totalScore = round.play(in, totalScore, true);
+            WordleRound currentRound = ROUNDS[i - 1];
+            currentRound.begin(in, i, true);
+            totalScore = currentRound.play(in, totalScore, true);
         }
 
         // Save final score to leaderboard.
@@ -44,8 +45,14 @@ public class GameShow {
         System.out.println();
         System.out.println("Enter your name to save your score to the leaderboard: ");
         String name = in.nextLine();
-        while (name.contains(separator + "")) {
-            System.out.println("Invalid character '" + separator + "' in name. Try again.");
+        while (true) {
+            if (name.contains(separator + "")) {
+                System.out.println("Invalid character '" + separator + "' in name. Try again.");
+            } else if (name.length() == 0) {
+                System.out.println("Invalid name. Try again.");
+            } else {
+                break;
+            }
             name = in.nextLine();
         }
         saveScore(name, totalScore);
@@ -57,8 +64,8 @@ public class GameShow {
     }
 
     private static int getRank(int score) {
-        // Returns the rank of the player based on their score, according to the
-        // leaderboard.
+        // Returns the rank of the player based on their score compared with other
+        // players on the leaderboard.
         ArrayList<LeaderboardEntry> leaderboardData = getLeaderboardData();
         for (int i = 0; i < leaderboardData.size(); i++) {
             if (score >= leaderboardData.get(i).getScore()) {
@@ -71,6 +78,7 @@ public class GameShow {
     }
 
     private static void playSpecificRound(Scanner in, int roundIndex) {
+        // Plays a specific round of the game show and display rules.
         WordleRound round = ROUNDS[roundIndex - 1];
         round.begin(in, roundIndex, false);
         round.play(in, 0, false);
@@ -78,6 +86,7 @@ public class GameShow {
     }
 
     private static void saveScore(String name, int score) {
+        // Appends the player's name and score to the leaderboard file.
         try {
             FileWriter fw = new FileWriter("leaderboard.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
@@ -117,7 +126,6 @@ public class GameShow {
                 in.close();
                 System.exit(0);
             } else if (input.toUpperCase().equals("C")) {
-                Utils.clearScreen();
                 roundsScreen(in);
             } else if (input.toUpperCase().equals("L")) {
                 leaderboardScreen(in);
@@ -130,7 +138,8 @@ public class GameShow {
     }
 
     private static void acknowledgementsScreen(Scanner in) {
-        final int pause = 500; // Pause between lines when printed
+        // Displays the acknowledgements screen.
+        final int pause = 500; // How long to pause between lines when printed
         Utils.clearScreen();
         Utils.prettyPrint("Wordle Game Show was designed and built by Laura Gao.");
         Utils.sleep(pause);
@@ -201,10 +210,8 @@ public class GameShow {
         if (leaderboardEntries.size() == 0) {
             System.out.println("No one has beat the game yet. Do you want to be the first? ;)");
         } else {
-            final int gap = 5; // Number of spaces between table columns
             // Format the leaderboard entries into a table
             Object[][] leaderboardTable = new Object[leaderboardEntries.size()][];
-            Object[] header = new Object[] { "RANK", "NAME", "SCORE" }; // Header of the table columns
             int longestNameLength = 4; // number of characters in the longest name in the "name" column (including the
                                        // heading "name" which has 4 letters)
             for (int i = 0; i < leaderboardEntries.size(); i++) {
@@ -227,19 +234,28 @@ public class GameShow {
                 longestRankLength = 4;
 
             // Create string used to format the table, which dictates the spacing between
-            // columns
+            // columns. The "Score" column is right aligned while the others are left
+            // aligned. The columns are separated by a gap of 5 spaces.
             // This method for printing tables is from https://stackoverflow.com/a/18672745
-            String formatString = "%-" + (gap + longestRankLength) + "s%-" + (gap + longestNameLength) + "s%-"
+            final int gap = 5; // Number of spaces between table columns
+            String formatString = "%-" + (gap + longestRankLength) + "s%-" + (gap + longestNameLength) + "s%"
                     + longestScoreLength + "s%n";
-            System.out.format(formatString, header);
-            System.out.println("********************************************************");
+
+            // Print the column headers
+            System.out.format(formatString, new Object[] { "RANK", "NAME", "SCORE" });
+
+            // Create a horizontal line whose width is exactly the width of the table.
+            final int tableWidth = longestRankLength + longestNameLength + longestScoreLength + 2 * gap;
+            final String border = "*".repeat(tableWidth);
+            System.out.println(border);
+
+            // Print the table row-by-row
             for (Object[] row : leaderboardTable) {
                 System.out.format(formatString, row);
             }
-
+            System.out.println();
+            System.out.println(border);
         }
-        System.out.println();
-        System.out.println("********************************************************");
         System.out.println();
         System.out.println();
         System.out.println("Enter 'R' to return to the main menu.");
@@ -256,6 +272,8 @@ public class GameShow {
     }
 
     private static void roundsScreen(Scanner in) {
+        // Displays the rounds screen and allowers player to choose a round to play.
+        Utils.clearScreen();
         final String rounds = "12345";
         System.out.println("ROUNDS:");
         System.out.println("1 - Classic 5-letter Wordle");

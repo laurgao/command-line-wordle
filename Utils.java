@@ -52,7 +52,8 @@ public class Utils {
     }
 
     public static void prettyPrint(String str) {
-        // By default, this method adds a line break.
+        // Overload variant such that this method adds a line break unless otherwise
+        // specified.
         prettyPrint(str, true);
     }
 

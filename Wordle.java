@@ -44,6 +44,8 @@ abstract class WordleRound {
     }
 
     public WordleRound(String name, String description, int numLetters, int numGuesses, String typeOfWords) {
+        // Overload variant of constructor that allows the specification of
+        // `typeOfWords`.
         this.name = name;
         this.description = description;
         this.numLetters = numLetters;
@@ -53,6 +55,8 @@ abstract class WordleRound {
     }
 
     public WordleRound(String name, String description, int numLetters, int numGuesses, int numAnswers) {
+        // Overload variant of constructor that allows the specification of
+        // `numAnswers`.
         this.name = name;
         this.description = description;
         this.numLetters = numLetters;
@@ -86,6 +90,8 @@ abstract class WordleRound {
     }
 
     public void begin(Scanner in, int roundIndex, boolean skipRules) {
+        // This method is called when a new round is started.
+        // It prints the round's rules and prompts the user to begin.
         Utils.clearScreen();
         System.out.println("ROUND " + roundIndex + ": " + this.getName());
         System.out.println();
@@ -164,6 +170,8 @@ abstract class WordleRound {
     }
 
     static ArrayList<String> getWords(String fileName) {
+        // This method reads a text file of words and returns an ArrayList of all the
+        // words.
         ArrayList<String> words = new ArrayList<String>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -194,19 +202,21 @@ abstract class WordleRound {
     }
 
     WordleResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
-        // This method carries out the logic of a Wordle game with one answer (the UI of
-        // the user guessing.)
+        // This method carries out the logic and user interface of a Wordle game with
+        // one answer.
         boolean successful = false;
         // Store all guesses in a variable so we can print them all out later.
         ArrayList<String> allGuesses = new ArrayList<String>();
+        Utils.VoidFunction printGuesses = () -> {
+            // Print out all guesses so far with their letters highlighted in appropriate
+            // colours.
+            for (int i = 0; i < allGuesses.size(); i++) {
+                printColoredWord(allGuesses.get(i), answer, false);
+                System.out.println();
+            }
+        };
         while (true) {
-            String guess = this.getGuess(in, numLetters, allWords,
-                    () -> {
-                        for (int i = 0; i < allGuesses.size(); i++) {
-                            printColoredWord(allGuesses.get(i), answer, false);
-                            System.out.println();
-                        }
-                    });
+            String guess = this.getGuess(in, numLetters, allWords, printGuesses);
 
             if (guess.equals("RQ")) {
                 System.out.println("You rage quit. The answer is: " + answer);
@@ -214,18 +224,19 @@ abstract class WordleRound {
                 break;
             }
             Utils.clearScreen();
+            // If all the guesses have been used up without finding the answer, notify the
+            // player.
             if (!guess.equals(answer) && (allGuesses.size() + 1) == this.getNumGuesses()) {
                 System.out.println("You have used up all " + this.getNumGuesses()
                         + " guesses, so you won't get any points for this round. You can keep guessing, or you can enter 'RQ' to rage quit and move onto the next round.");
             }
             System.out.println();
-            for (int i = 0; i < allGuesses.size(); i++) {
-                printColoredWord(allGuesses.get(i), answer, false);
-                System.out.println();
-            }
+            // Print out old guesses and the new guess.
+            printGuesses.run();
             printColoredWord(guess, answer, true);
             System.out.println();
             allGuesses.add(guess);
+            // If the guess is correct, notify the player and break out of the loop.
             if (guess.equals(answer)) {
                 System.out.println("Heck yea, you got the correct answer in " + allGuesses.size() + " guesses!");
                 successful = true;
@@ -302,6 +313,8 @@ abstract class WordleRound {
     }
 
     String getGuess(Scanner in, int wordLength, ArrayList<String> words, Utils.VoidFunction recreateCurrentScreen) {
+        // This method obtains the user's inputted guess and handles the logic for
+        // dealing with invalid guesses.
         String guess;
         while (true) {
             guess = in.nextLine().toUpperCase();
@@ -393,7 +406,6 @@ class Round3 extends WordleRound {
 
         WordleResult result = mainWordle(in, answer, allWords);
         return postprocessWordleResult(result, prevScore, includeTotalScore, in);
-
     }
 }
 
@@ -432,7 +444,7 @@ class Round4 extends WordleRound {
                 boolean ans1Solved = false;
                 boolean ans2Solved = false;
                 for (int i = 0; i < allGuesses.size(); i++) {
-                    // If an answer has already been solved, do not print out this guess for the
+                    // If an answer has already been solved, do not print out this guess for that
                     // answer.
                     if (!ans1Solved) {
                         printColoredWord(allGuesses.get(i), answer1, false);

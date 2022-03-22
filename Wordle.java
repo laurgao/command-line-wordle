@@ -455,7 +455,10 @@ class Round4 extends WordleRound {
             }
 
             Utils.clearScreen();
-            if (!(answer1Solved > 0 && answer2Solved > 0) && (allGuesses.size() + 1) == this.getNumGuesses()) {
+            // If all the guesses are used up but the player has not found both answers,
+            // notify the player.
+            if (!((answer1Solved > 0 || guess.equals(answer1)) && (answer2Solved > 0 || guess.equals(answer2)))
+                    && (allGuesses.size() + 1) == this.getNumGuesses()) {
                 System.out.println("You have used up all " + this.getNumGuesses()
                         + " guesses, so you won't get any points for any correct guesses after this point. You can keep guessing, or you can enter 'RQ' to rage quit and move onto the next round.");
             }

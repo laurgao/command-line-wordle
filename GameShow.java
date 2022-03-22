@@ -92,6 +92,7 @@ public class GameShow {
     }
 
     private static void welcomeScreen(Scanner in) {
+        // The main menu
         Utils.clearScreen();
         System.out.println("********************************************************");
         System.out.println("WELCOME TO THE WORLD'S FIRST WORDLE GAME SHOW!");
@@ -104,6 +105,7 @@ public class GameShow {
         System.out.println("Q - Quit :(");
         System.out.println("C - Choose specific round");
         System.out.println("L - View leaderboard");
+        System.out.println("A - Acknowledgements");
         System.out.println();
 
         while (true) {
@@ -119,8 +121,35 @@ public class GameShow {
                 roundsScreen(in);
             } else if (input.toUpperCase().equals("L")) {
                 leaderboardScreen(in);
+            } else if (input.toUpperCase().equals("A")) {
+                acknowledgementsScreen(in);
             } else {
                 System.out.println("Invalid input. Please try again.");
+            }
+        }
+    }
+
+    private static void acknowledgementsScreen(Scanner in) {
+        final int pause = 500; // Pause between lines when printed
+        Utils.clearScreen();
+        Utils.prettyPrint("Wordle Game Show was designed and built by Laura Gao.");
+        Utils.sleep(pause);
+        System.out.println();
+        Utils.prettyPrint(
+                "Thanks to the following people for playtesting and for their valuable feedback: ", false);
+        Utils.sleep(pause);
+        Utils.prettyPrint("Emma, Colleen, Ahmed, Emily, Susie, Quan, and Gloria.");
+        Utils.sleep(pause);
+        System.out.println();
+        System.out.println();
+        System.out.println("Enter 'R' to return to the main menu.");
+        String input = in.nextLine();
+        while (true) {
+            if (input.toUpperCase().equals("R")) {
+                welcomeScreen(in);
+            } else {
+                System.out.println("Invalid input. Please try again.");
+                input = in.nextLine();
             }
         }
     }

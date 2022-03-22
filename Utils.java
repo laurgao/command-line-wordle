@@ -19,7 +19,8 @@ public class Utils {
     public static final String WHITE = "\033[1;97m";
 
     public static void clearScreen() {
-        // From https://stackoverflow.com/a/33379766
+        // This method the window command prompt. From
+        // https://stackoverflow.com/a/33379766
         try {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         } catch (InterruptedException e) {
@@ -38,5 +39,28 @@ public class Utils {
             i++;
         }
         return i;
+    }
+
+    public static void prettyPrint(String str, boolean lineBreak) {
+        char[] chars = str.toCharArray();
+        for (char character : chars) {
+            System.out.print(character);
+            sleep(20);
+        }
+        if (lineBreak)
+            System.out.println();
+    }
+
+    public static void prettyPrint(String str) {
+        // By default, this method adds a line break.
+        prettyPrint(str, true);
+    }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

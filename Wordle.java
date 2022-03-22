@@ -459,8 +459,8 @@ class Round4 extends WordleRound {
             if (!(answer1Solved > 0 && answer2Solved > 0) && (allGuesses.size() + 1) == this.getNumGuesses()) {
                 System.out.println("You have used up all " + this.getNumGuesses()
                         + " guesses, so you won't get any points for any correct guesses after this point. You can keep guessing, or you can enter 'RQ' to rage quit and move onto the next round.");
-                System.out.println();
             }
+            System.out.println();
             recreateCurrentScreen.run();
             if (answer1Solved == 0) {
                 printColoredWord(guess, answer1, true);

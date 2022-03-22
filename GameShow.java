@@ -164,9 +164,8 @@ public class GameShow {
         } else {
             final int gap = 5; // Number of spaces between table columns
             // Format the leaderboard entries into a table
-            Object[][] leaderboardTable = new Object[leaderboardEntries.size() + 1][];
-            leaderboardTable[0] = new Object[] { "RANK", "NAME", "SCORE" };
-            System.out.println("********************************************************");
+            Object[][] leaderboardTable = new Object[leaderboardEntries.size()][];
+            Object[] header = new Object[] { "RANK", "NAME", "SCORE" }; // Header of the table columns
             int longestNameLength = 4; // number of characters in the longest name in the "name" column (including the
                                        // heading "name" which has 4 letters)
             for (int i = 0; i < leaderboardEntries.size(); i++) {
@@ -175,25 +174,27 @@ public class GameShow {
                 if (name.length() > longestNameLength)
                     longestNameLength = name.length();
                 int score = leaderboardEntries.get(i).getScore();
-                leaderboardTable[i + 1] = new Object[] { rank, name, score };
+                leaderboardTable[i] = new Object[] { rank, name, score };
             }
             // number of characters in the largest score
-            int longestScoreLength = getNumDigits(leaderboardEntries.get(0).getScore());
+            int longestScoreLength = Utils.getNumDigits(leaderboardEntries.get(0).getScore());
             // The heading "score" has 5 letters
             if (longestScoreLength < 5)
                 longestScoreLength = 5;
 
-            int longestRankLength = getNumDigits(leaderboardEntries.size() + 1);
+            int longestRankLength = Utils.getNumDigits(leaderboardEntries.size() + 1);
             // The heading "rank" has 5 letters
             if (longestRankLength < 4)
                 longestRankLength = 4;
 
+            // Create string used to format the table, which dictates the spacing between
+            // columns
+            // This method for printing tables is from https://stackoverflow.com/a/18672745
+            String formatString = "%-" + (gap + longestRankLength) + "s%-" + (gap + longestNameLength) + "s%-"
+                    + longestScoreLength + "s%n";
+            System.out.format(formatString, header);
+            System.out.println("********************************************************");
             for (Object[] row : leaderboardTable) {
-                // Create string used to format the table, which dictates the spacing between
-                // columns
-                String formatString = "%-" + (gap + longestRankLength) + "s%-" + (gap + longestNameLength) + "s%-"
-                        + longestScoreLength + "s%n";
-                // This method for printing tables is from https://stackoverflow.com/a/18672745
                 System.out.format(formatString, row);
             }
 
@@ -202,7 +203,7 @@ public class GameShow {
         System.out.println("********************************************************");
         System.out.println();
         System.out.println();
-        System.out.println("Press 'R' to return to the main menu.");
+        System.out.println("Enter 'R' to return to the main menu.");
         String input = in.nextLine();
         while (true) {
             if (input.toUpperCase().equals("R")) {
@@ -212,11 +213,6 @@ public class GameShow {
                 input = in.nextLine();
             }
         }
-    }
-
-    private static int getNumDigits(int n) {
-        // TODO
-        return 4;
     }
 
     private static void roundsScreen(Scanner in) {

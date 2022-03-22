@@ -28,4 +28,15 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    public static int getNumDigits(int n) {
+        n = Math.abs(n);
+        if (n == 0)
+            return 1;
+        int i = 0;
+        while (n / (int) Math.pow(10, i) > 0) {
+            i++;
+        }
+        return i;
+    }
 }

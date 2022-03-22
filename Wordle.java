@@ -288,11 +288,7 @@ abstract class WordleRound {
             }
             if (showAnimation) {
                 System.out.print(output);
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Utils.sleep(250);
             } else {
                 System.out.print(output);
             }

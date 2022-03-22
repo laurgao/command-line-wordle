@@ -16,6 +16,9 @@ public class GameShow {
             new Round5(),
     };
 
+    // Standardized character to separate name and score in the leaderboard file
+    private static final char separator = '/';
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         welcomeScreen(in);
@@ -38,10 +41,11 @@ public class GameShow {
         int rank = getRank(totalScore);
         System.out.println("Congrats on completing the Wordle game show!\n"
                 + "Your final score is " + totalScore + " which gives you a ranking of #" + rank + "!");
+        System.out.println();
         System.out.println("Enter your name to save your score to the leaderboard: ");
         String name = in.nextLine();
-        while (name.contains("/")) {
-            System.out.println("Invalid character '/' in name. Try again.");
+        while (name.contains(separator + "")) {
+            System.out.println("Invalid character '" + separator + "' in name. Try again.");
             name = in.nextLine();
         }
         saveScore(name, totalScore);
@@ -78,7 +82,7 @@ public class GameShow {
             FileWriter fw = new FileWriter("leaderboard.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw);
-            out.println(name + "/" + score);
+            out.println(name + separator + score);
             out.close();
         } catch (IOException e) {
             System.out.println();
@@ -130,10 +134,10 @@ public class GameShow {
 
             String s;
             while ((s = br.readLine()) != null) {
-                final String name = s.split("/")[0];
+                final String name = s.split(separator + "")[0];
                 final int score;
                 try {
-                    String scoreStr = s.split("/")[1];
+                    String scoreStr = s.split(separator + "")[1];
                     score = Integer.parseInt(scoreStr);
                 } catch (NumberFormatException e) {
                     // This is not a valid score, so we skip this line of the file.

@@ -303,7 +303,7 @@ class Round1 extends WordleRound {
         boolean successful = result.getSecond();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        int totalScore = newPoints + newPoints;
+        int totalScore = newPoints + prevScore;
         printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
         return totalScore;
     }
@@ -446,7 +446,7 @@ class Round4 extends WordleRound {
         newPoints += (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= 6)
                 ? (int) Math.pow((7 - allGuesses.size()), 2) * 100
                 : 0;
-        int totalScore = prevScore += newPoints;
+        int totalScore = prevScore + newPoints;
         printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
 
         return totalScore;

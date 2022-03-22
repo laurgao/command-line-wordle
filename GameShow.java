@@ -162,14 +162,17 @@ public class GameShow {
         if (leaderboardEntries.size() == 0) {
             System.out.println("No one has beat the game yet. Do you want to be the first? ;)");
         } else {
-            System.out.println("RANK\tNAME\tSCORE");
+            // Format the leaderboard entries into a table
+            System.out.format("%4s%25s%10s%n", new Object[] { "RANK", "NAME", "SCORE" });
             System.out.println("********************************************************");
             for (int i = 0; i < leaderboardEntries.size(); i++) {
                 int rank = i + 1;
                 String name = leaderboardEntries.get(i).getName();
                 int score = leaderboardEntries.get(i).getScore();
-                System.out.println(rank + "\t" + name + "\t" + score);
+                Object[] leaderboardRow = new Object[] { rank, name, score };
+                System.out.format("%4s%25s%10s%n", leaderboardRow);
             }
+
         }
         System.out.println();
         System.out.println("********************************************************");

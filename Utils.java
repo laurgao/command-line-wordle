@@ -19,7 +19,7 @@ public class Utils {
     public static final String WHITE = "\033[1;97m";
 
     public static void clearScreen() {
-        // This method the window command prompt. From
+        // This method clears the window command prompt. From
         // https://stackoverflow.com/a/33379766
         try {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
@@ -57,6 +57,7 @@ public class Utils {
     }
 
     public static void sleep(long millis) {
+        // Wrapper around `Thread.sleep` that catches exceptions.
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

@@ -148,6 +148,7 @@ public class GameShow {
         System.out.println();
         System.out.println();
         System.out.println("Enter 'R' to return to the main menu.");
+        System.out.println();
         String input = in.nextLine();
         while (true) {
             if (input.toUpperCase().equals("R")) {
@@ -242,6 +243,7 @@ public class GameShow {
         System.out.println();
         System.out.println();
         System.out.println("Enter 'R' to return to the main menu.");
+        System.out.println();
         String input = in.nextLine();
         while (true) {
             if (input.toUpperCase().equals("R")) {
@@ -265,9 +267,12 @@ public class GameShow {
 
         System.out.println(
                 "By playing a specific level, you will not be able to accrue a total score and will not be competing for a position on the leaderboard.");
-        System.out.println("This is for practicing a specific level that you want to improve or try out.");
+        System.out.println(
+                "Select this option if you would like to try out a specific level or practice a specific round to improve.");
         System.out.println();
-        System.out.println("Enter the number of the round you want to jump to.");
+        Utils.sleep(1000);
+        Utils.prettyPrint("Enter the number of the round you want to jump to.");
+        Utils.sleep(500);
         System.out.println("Or, enter 'R' to return to the main menu.");
         System.out.println();
         String round = in.nextLine();

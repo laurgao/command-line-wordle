@@ -144,7 +144,7 @@ abstract class WordleRound {
         System.out.println();
     }
 
-    // This method is called to play the round. the main method of the round that
+    // This method is called to play the round. It's the most important method that
     // child classes have to implement.
     abstract int play(Scanner in, int prevScore, boolean includeTotalScore);
 
@@ -301,8 +301,7 @@ abstract class WordleRound {
         System.out.print(Utils.RESET);
     }
 
-    String getGuess(Scanner in, int wordLength, ArrayList<String> words,
-            Utils.VoidFunction recreateCurrentScreen) {
+    String getGuess(Scanner in, int wordLength, ArrayList<String> words, Utils.VoidFunction recreateCurrentScreen) {
         String guess;
         while (true) {
             guess = in.nextLine().toUpperCase();
@@ -351,7 +350,7 @@ abstract class WordleRound {
 
 class Round1 extends WordleRound {
     Round1() {
-        super("CLASSIC WORDLE", "You will be given a 5-letter word and you must guess it within 6 tries.", 5, 6);
+        super("CLASSIC WORDLE", "There will be a hidden 5-letter word and you must guess it within 6 tries.", 5, 6);
     }
 
     @Override

@@ -1,3 +1,8 @@
+// Laura Gao (342611589)
+// ICS4U1 - Mr. Anthony
+// March 12, 2022
+// This program is a game show where the user has to solve variations of the Wordle game to win points.
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -19,20 +24,20 @@ public class GameShow {
     private static void beginGame(Scanner in) {
         Utils.clearScreen();
         int totalScore = 0;
-        final int numRounds = 5;
+        int numRounds = ROUNDS.length;
         WordleRound round1 = ROUNDS[0];
         round1.begin(in, 1, false);
-        totalScore = round1.play(in, totalScore);
+        totalScore = round1.play(in, totalScore, true);
         for (int i = 2; i < numRounds + 1; i++) {
-            WordleRound round = ROUNDS[i];
+            WordleRound round = ROUNDS[i - 1];
             round.begin(in, i, true);
-            totalScore = round.play(in, totalScore);
+            totalScore = round.play(in, totalScore, true);
         }
 
         // Save final score to leaderboard.
         int rank = getRank(totalScore);
         System.out.println("Congrats on completing the Wordle game show!\n"
-                + "Your final score is: " + totalScore + " which gives you a ranking of #" + rank + "!");
+                + "Your final score is " + totalScore + " which gives you a ranking of #" + rank + "!");
         System.out.println("Enter your name to save your score to the leaderboard: ");
         String name = in.nextLine();
         saveScore(name, totalScore);
@@ -60,7 +65,7 @@ public class GameShow {
     private static void playSpecificRound(Scanner in, int roundIndex) {
         WordleRound round = ROUNDS[roundIndex - 1];
         round.begin(in, roundIndex, false);
-        round.play(in, 0);
+        round.play(in, 0, false);
         welcomeScreen(in);
     }
 

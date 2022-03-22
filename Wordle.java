@@ -99,12 +99,13 @@ abstract class WordleRound {
 
     // This method is called to play the round. the main method of the round that
     // child classes have to implement.
-    abstract int play(Scanner in, int totalScore);
+    abstract int play(Scanner in, int prevScore, boolean includeTotalScore);
 
     // The following are utility methods that may be used in the `play` method of
     // child class implementations.
-    static void printFinishedRoundMessage(int newPoints, int totalScore, Scanner in) {
-        System.out.println("This earns you an additional " + newPoints + " points for a total score of " + totalScore);
+    static void printFinishedRoundMessage(int newPoints, int totalScore, Scanner in, boolean includeTotalScore) {
+        System.out.println("This earns you an additional " + newPoints
+                + (includeTotalScore ? " points for a total score of " + totalScore : "points."));
         System.out.println();
         System.out.println("Press enter to continue...");
         in.nextLine();
@@ -114,8 +115,7 @@ abstract class WordleRound {
     static ArrayList<String> getWords(String fileName) {
         ArrayList<String> words = new ArrayList<String>();
         try {
-            BufferedReader br = new BufferedReader(
-                    new FileReader(fileName));
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
 
             String s;
             while ((s = br.readLine()) != null) {
@@ -279,7 +279,7 @@ class Round1 extends WordleRound {
     }
 
     @Override
-    int play(Scanner in, int totalScore) {
+    int play(Scanner in, int prevScore, boolean includeTotalScore) {
         final ArrayList<String> possibleAnswers = getWords("./wordlist_5_answers.txt");
         final ArrayList<String> allWords = getWords("./wordlist_5_all.txt");
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
@@ -289,8 +289,8 @@ class Round1 extends WordleRound {
         boolean successful = result.getSecond();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        totalScore += newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in);
+        int totalScore = newPoints + newPoints;
+        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
         return totalScore;
     }
 }
@@ -301,7 +301,7 @@ class Round2 extends WordleRound {
     }
 
     @Override
-    int play(Scanner in, int totalScore) {
+    int play(Scanner in, int prevScore, boolean includeTotalScore) {
         final ArrayList<String> words_possible_ansnwers = getWords("./wordlist_4_answers.txt");
         final ArrayList<String> allWords = getWords("./wordlist_4_all.txt");
         final String answer = words_possible_ansnwers.get((int) (Math.random() * words_possible_ansnwers.size()));
@@ -310,10 +310,9 @@ class Round2 extends WordleRound {
         int newPoints = (result.getSecond() && result.getFirst().size() <= 6)
                 ? (int) Math.pow((7 - result.getFirst().size()), 2) * 100
                 : 0;
-        totalScore += newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in);
+        int totalScore = prevScore + newPoints;
+        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
         return totalScore;
-
     }
 }
 
@@ -323,7 +322,7 @@ class Round3 extends WordleRound {
     }
 
     @Override
-    int play(Scanner in, int totalScore) {
+    int play(Scanner in, int prevScore, boolean includeTotalScore) {
         final ArrayList<String> allWords = getWords("./wordlist_6_all.txt");
         final ArrayList<String> possibleAnswers = getWords("./wordlist_6_answers.txt");
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
@@ -333,8 +332,8 @@ class Round3 extends WordleRound {
         boolean successful = result.getSecond();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        totalScore += newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in);
+        int totalScore = prevScore + newPoints;
+        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
         return totalScore;
     }
 }
@@ -347,7 +346,7 @@ class Round4 extends WordleRound {
     }
 
     @Override
-    int play(Scanner in, int totalScore) {
+    int play(Scanner in, int prevScore, boolean includeTotalScore) {
         final String gap = "               "; // Gap between the two wordles when they are printed out.
 
         final ArrayList<String> possibleAnswers = getWords("./wordlist_5_answers.txt");
@@ -433,8 +432,8 @@ class Round4 extends WordleRound {
         newPoints += (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= 6)
                 ? (int) Math.pow((7 - allGuesses.size()), 2) * 100
                 : 0;
-        totalScore += newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in);
+        int totalScore = prevScore += newPoints;
+        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
 
         return totalScore;
     }
@@ -448,7 +447,7 @@ class Round5 extends WordleRound {
     }
 
     @Override
-    int play(Scanner in, int totalScore) {
+    int play(Scanner in, int prevScore, boolean includeTotalScore) {
         final ArrayList<String> allWords = getWords("./wordlist_java_keywords.txt");
         final String answer = allWords.get((int) (Math.random() * allWords.size()));
 
@@ -457,8 +456,8 @@ class Round5 extends WordleRound {
         boolean successful = result.getSecond();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        totalScore += newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in);
+        int totalScore = prevScore + newPoints;
+        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
         return totalScore;
     }
 }

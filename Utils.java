@@ -1,4 +1,4 @@
-import java.io.*;
+import java.io.IOException;
 
 public class Utils {
     // This is a class for utility methods/variables shared between classes. These

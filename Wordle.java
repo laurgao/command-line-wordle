@@ -27,12 +27,22 @@ class MyResult {
 abstract class WordleRound {
     private final String name;
     private final String description;
-    private final int numLetters; // 0 if length of different words is different
+    private final int numLetters; // 0 if number of letters of different words is different
+    private final String typeOfWords;
 
     public WordleRound(String name, String description, int numLetters) {
         this.name = name;
         this.description = description;
         this.numLetters = numLetters;
+        // By default, Wordle rounds include all words.
+        this.typeOfWords = "word";
+    }
+
+    public WordleRound(String name, String description, int numLetters, String typeOfWords) {
+        this.name = name;
+        this.description = description;
+        this.numLetters = numLetters;
+        this.typeOfWords = typeOfWords;
     }
 
     public String getName() {
@@ -45,6 +55,10 @@ abstract class WordleRound {
 
     public int getNumLetters() {
         return numLetters;
+    }
+
+    public String getTypeOfWords() {
+        return typeOfWords;
     }
 
     public void begin(Scanner in, int roundIndex, boolean skipRules) {
@@ -140,20 +154,20 @@ abstract class WordleRound {
         return words;
     }
 
-    static MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords) {
+    MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords) {
         // Overload variant of `mainWordle` where the number of letters is simply the
         // length of the answer.
-        return mainWordle(in, answer, allWords, answer.length());
+        return this.mainWordle(in, answer, allWords, answer.length());
     }
 
-    static MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
+    MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
         // This method carries out the logic of a single wordle game (the UI of the user
         // guessing.)
         boolean successful = false;
         ArrayList<String> allGuesses = new ArrayList<String>(); // Store all guesses in a variable so we can print
                                                                 // them all out later.
         while (true) {
-            String guess = getGuess(in, numLetters, allWords,
+            String guess = this.getGuess(in, numLetters, allWords,
                     () -> {
                         for (int i = 0; i < allGuesses.size(); i++) {
                             printColoredWord(allGuesses.get(i), answer, false);
@@ -254,7 +268,7 @@ abstract class WordleRound {
         System.out.print(Utils.RESET);
     }
 
-    static String getGuess(Scanner in, int wordLength, ArrayList<String> words,
+    String getGuess(Scanner in, int wordLength, ArrayList<String> words,
             Utils.VoidFunction recreateCurrentScreen) {
         String guess;
         while (true) {
@@ -275,7 +289,7 @@ abstract class WordleRound {
             // Check that guess is a word
             if (!words.contains(guess)) {
                 Utils.clearScreen();
-                System.out.println(Utils.RED + guess + " is not a word." + Utils.RESET);
+                System.out.println(Utils.RED + guess + " is not a " + this.getTypeOfWords() + "." + Utils.RESET);
                 System.out.println();
                 recreateCurrentScreen.run();
                 continue;
@@ -457,7 +471,7 @@ class Round5 extends WordleRound {
     Round5() {
         super("SPECIAL EDITION - JAVA KEYWORDS",
                 "The answer of this special round will be one of the 67 possible Java reserved words. You will have 6 tries to guess it. You do not know how many letters the answer contains.",
-                0);
+                0, "Java reserved word");
     }
 
     @Override

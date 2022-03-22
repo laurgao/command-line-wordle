@@ -28,31 +28,35 @@ abstract class WordleRound {
     private final String name;
     private final String description;
     private final int numLetters; // 0 if number of letters of different words is different
+    private final int numGuesses;
     private final String typeOfWords;
     private final int numAnswers;
 
-    public WordleRound(String name, String description, int numLetters) {
+    public WordleRound(String name, String description, int numLetters, int numGuesses) {
         this.name = name;
         this.description = description;
         this.numLetters = numLetters;
+        this.numGuesses = numGuesses;
         // By default, Wordle rounds include all words.
         this.typeOfWords = "word";
         // By default, Wordle rounds have 1 answer.
         this.numAnswers = 1;
     }
 
-    public WordleRound(String name, String description, int numLetters, String typeOfWords) {
+    public WordleRound(String name, String description, int numLetters, int numGuesses, String typeOfWords) {
         this.name = name;
         this.description = description;
         this.numLetters = numLetters;
+        this.numGuesses = numGuesses;
         this.typeOfWords = typeOfWords;
         this.numAnswers = 1;
     }
 
-    public WordleRound(String name, String description, int numLetters, int numAnswers) {
+    public WordleRound(String name, String description, int numLetters, int numGuesses, int numAnswers) {
         this.name = name;
         this.description = description;
         this.numLetters = numLetters;
+        this.numGuesses = numGuesses;
         this.typeOfWords = "word";
         this.numAnswers = numAnswers;
     }
@@ -67,6 +71,10 @@ abstract class WordleRound {
 
     public int getNumLetters() {
         return numLetters;
+    }
+
+    public int getNumGuesses() {
+        return numGuesses;
     }
 
     public String getTypeOfWords() {
@@ -201,6 +209,10 @@ abstract class WordleRound {
                 break;
             }
             Utils.clearScreen();
+            if (!guess.equals(answer) && (allGuesses.size() + 1) == this.getNumGuesses()) {
+                System.out.println("You have used up all " + this.getNumGuesses()
+                        + " guesses, so you won't get any points for this round. You can keep guessing, or you can enter 'RQ' to rage quit and move onto the next round.");
+            }
             System.out.println();
             for (int i = 0; i < allGuesses.size(); i++) {
                 printColoredWord(allGuesses.get(i), answer, false);
@@ -300,7 +312,7 @@ abstract class WordleRound {
             // Check that guess has correct number of characters
             if (wordLength > 0 && guess.length() != wordLength) {
                 Utils.clearScreen();
-                System.out.println(Utils.RED + "Please enter a word of length " + wordLength + Utils.RESET);
+                System.out.println(Utils.RED + "Please enter a word of length " + wordLength + "." + Utils.RESET);
                 System.out.println();
                 recreateCurrentScreen.run();
                 continue;
@@ -323,7 +335,7 @@ abstract class WordleRound {
 
 class Round1 extends WordleRound {
     Round1() {
-        super("CLASSIC WORDLE", "You will be given a 5-letter word and you must guess it within 6 tries.", 5);
+        super("CLASSIC WORDLE", "You will be given a 5-letter word and you must guess it within 6 tries.", 5, 6);
     }
 
     @Override
@@ -345,7 +357,7 @@ class Round1 extends WordleRound {
 
 class Round2 extends WordleRound {
     Round2() {
-        super("4-LETTER WORDLE", "You have 6 tries to guess the word.", 4);
+        super("4-LETTER WORDLE", "You have 6 tries to guess the word.", 4, 6);
     }
 
     @Override
@@ -366,7 +378,7 @@ class Round2 extends WordleRound {
 
 class Round3 extends WordleRound {
     Round3() {
-        super("6-LETTER WORDLE", "You have 10 tries to guess the word.", 6);
+        super("6-LETTER WORDLE", "You have 10 tries to guess the word.", 6, 10);
     }
 
     @Override
@@ -390,7 +402,7 @@ class Round4 extends WordleRound {
     Round4() {
         super("DOUBLE WORDLE",
                 "You have six tries to guess two 5-letter words. Each guess will be used on both words simultaneously. You will earn points for each answer you solve under the allocated number of attempts.",
-                5, 2);
+                5, 6, 2);
     }
 
     @Override
@@ -421,6 +433,8 @@ class Round4 extends WordleRound {
                 boolean ans1Solved = false;
                 boolean ans2Solved = false;
                 for (int i = 0; i < allGuesses.size(); i++) {
+                    // If an answer has already been solved, do not print out this guess for the
+                    // answer.
                     if (!ans1Solved) {
                         printColoredWord(allGuesses.get(i), answer1, false);
                         ans1Solved = answer1.equals(allGuesses.get(i));
@@ -441,9 +455,12 @@ class Round4 extends WordleRound {
                 break;
             }
 
-            // If an answer has already been solved, do not print out this guess for the
-            // answer.
             Utils.clearScreen();
+            if (!(answer1Solved > 0 && answer2Solved > 0) && (allGuesses.size() + 1) == this.getNumGuesses()) {
+                System.out.println("You have used up all " + this.getNumGuesses()
+                        + " guesses, so you won't get any points for any correct guesses after this point. You can keep guessing, or you can enter 'RQ' to rage quit and move onto the next round.");
+                System.out.println();
+            }
             recreateCurrentScreen.run();
             if (answer1Solved == 0) {
                 printColoredWord(guess, answer1, true);
@@ -504,7 +521,7 @@ class Round5 extends WordleRound {
     Round5() {
         super("SPECIAL EDITION - JAVA KEYWORDS",
                 "The answer of this special round will be one of the 67 possible Java reserved words. You will have 6 tries to guess it. You do not know how many letters the answer contains.",
-                0, "Java reserved word");
+                0, 6, "Java reserved word");
     }
 
     @Override

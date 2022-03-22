@@ -9,11 +9,11 @@ import java.util.Scanner;
 
 public class GameShow {
     private static final WordleRound[] ROUNDS = {
-            new Round1(),
-            new Round2(),
-            new Round3(),
-            new Round4(),
-            new Round5(),
+        new Round1(),
+        new Round2(),
+        new Round3(),
+        new Round4(),
+        new Round5(),
     };
 
     public static void main(String[] args) {

@@ -1,3 +1,6 @@
+// This file contains the logic specific to the Wordle game.
+// Code for the main gameshow is in GameShow.java
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -193,7 +196,7 @@ abstract class WordleRound {
             char thisLetter = guess.charAt(i);
             if (i < answerLength) {
                 if (thisLetter == answer.charAt(i)) {
-                    output += Utils.GREEN + thisLetter;
+                    output = Utils.GREEN + thisLetter;
                 } else if (answer.contains(thisLetter + "")) {
                     int index = answer.indexOf(thisLetter);
                     if (guess.indexOf(thisLetter) == i) {
@@ -202,20 +205,20 @@ abstract class WordleRound {
                                 || answer.substring(index + 1).contains(thisLetter + "")) {
                             // The letter at the position of the the answer and guess is not the same OR
                             // This letter appears twice in this answer
-                            output += Utils.ORANGE + thisLetter;
+                            output = Utils.ORANGE + thisLetter;
                         } else {
-                            output += Utils.WHITE + thisLetter;
+                            output = Utils.WHITE + thisLetter;
                         }
                     } else if (answer.substring(index + 1).contains(thisLetter + "")
                             && answer.substring(index + 1).indexOf(thisLetter) == i) {
                         // This letter appears twice in this answer and this is the second occurance of
                         // this letter in the guess
-                        output += Utils.WHITE + thisLetter;
+                        output = Utils.WHITE + thisLetter;
                     } else {
-                        output += Utils.WHITE + thisLetter;
+                        output = Utils.WHITE + thisLetter;
                     }
                 } else {
-                    output += Utils.WHITE + thisLetter;
+                    output = Utils.WHITE + thisLetter;
                 }
             } else {
                 // If the guess is longer than the answer, then we don't need to worry about any
@@ -223,21 +226,31 @@ abstract class WordleRound {
                 if (answer.contains(thisLetter + "")) {
                     if (guess.indexOf(thisLetter) == i) {
                         // This is the first occurance of this letter in the guess
-                        output += Utils.ORANGE + thisLetter;
+                        output = Utils.ORANGE + thisLetter;
                     } else if (answer.substring(answer.indexOf(thisLetter) + 1).contains(thisLetter + "")
                             && answer.substring(answer.indexOf(thisLetter) + 1).indexOf(thisLetter) == i) {
                         // This letter appears twice in this answer and this is the second occurance of
                         // this letter in the guess
-                        output += Utils.WHITE + thisLetter;
+                        output = Utils.WHITE + thisLetter;
                     } else {
-                        output += Utils.WHITE + thisLetter;
+                        output = Utils.WHITE + thisLetter;
                     }
                 } else {
-                    output += Utils.WHITE + thisLetter;
+                    output = Utils.WHITE + thisLetter;
                 }
             }
+            if (showAnimation) {
+                System.out.print(output);
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.print(output);
+            }
         }
-        System.out.print(output + Utils.RESET);
+        System.out.print(Utils.RESET);
     }
 
     static String getGuess(Scanner in, int wordLength, ArrayList<String> words,

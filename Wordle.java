@@ -101,7 +101,9 @@ abstract class WordleRound {
         System.out.println();
         if (!skipRules) {
             System.out.println();
-            System.out.println("Press enter to continue...");
+            Utils.sleep(1000);
+            Utils.prettyPrint("Press enter to continue...");
+            Utils.sleep(500);
             System.out.println("(If you already know how to play Wordle, enter 'S' to skip the rules.)");
             System.out.println();
             while (true) {
@@ -127,7 +129,8 @@ abstract class WordleRound {
                     System.out.println(
                             Utils.GREEN + "GREEN: this letter exists in the word and is in the right location.");
                     System.out.println(Utils.RESET);
-                    System.out.println("Press enter to continue...");
+                    Utils.sleep(1000);
+                    Utils.prettyPrint("Press enter to continue...");
                     in.nextLine();
                     break;
                 }
@@ -153,7 +156,8 @@ abstract class WordleRound {
         else
             System.out.println("This earns you " + newPoints + " points.");
         System.out.println();
-        System.out.println("Press enter to continue...");
+        Utils.sleep(1000);
+        Utils.prettyPrint("Press enter to continue...");
         in.nextLine();
         Utils.clearScreen();
     }

@@ -29,6 +29,7 @@ abstract class WordleRound {
     private final String description;
     private final int numLetters; // 0 if number of letters of different words is different
     private final String typeOfWords;
+    private final int numAnswers;
 
     public WordleRound(String name, String description, int numLetters) {
         this.name = name;
@@ -36,6 +37,8 @@ abstract class WordleRound {
         this.numLetters = numLetters;
         // By default, Wordle rounds include all words.
         this.typeOfWords = "word";
+        // By default, Wordle rounds have 1 answer.
+        this.numAnswers = 1;
     }
 
     public WordleRound(String name, String description, int numLetters, String typeOfWords) {
@@ -43,6 +46,15 @@ abstract class WordleRound {
         this.description = description;
         this.numLetters = numLetters;
         this.typeOfWords = typeOfWords;
+        this.numAnswers = 1;
+    }
+
+    public WordleRound(String name, String description, int numLetters, int numAnswers) {
+        this.name = name;
+        this.description = description;
+        this.numLetters = numLetters;
+        this.typeOfWords = "word";
+        this.numAnswers = numAnswers;
     }
 
     public String getName() {
@@ -61,6 +73,10 @@ abstract class WordleRound {
         return typeOfWords;
     }
 
+    public int getNumAnswers() {
+        return numAnswers;
+    }
+
     public void begin(Scanner in, int roundIndex, boolean skipRules) {
         Utils.clearScreen();
         System.out.println("ROUND " + roundIndex + ": " + this.getName());
@@ -68,10 +84,11 @@ abstract class WordleRound {
         System.out.println(this.getDescription());
         if (!skipRules) {
             System.out.println(
-                    "If you don't get the word in the allotted number of guesses, you will not get any points.");
+                    "If you don't get " + (this.getNumAnswers() == 1 ? "the answer" : "any answer")
+                            + " in the allotted number of guesses, you will not get any points.");
             System.out.println();
             System.out.println(
-                    "For your viewing pleasure, it is recommended that this game is played in a console whose background colour is dark.");
+                    "For the best display of colours, it is recommended that this game is played in a terminal whose background colour is dark.");
         }
         System.out.println();
         if (!skipRules) {
@@ -122,8 +139,11 @@ abstract class WordleRound {
     // The following are utility methods that may be used in the `play` method of
     // child class implementations.
     static void printFinishedRoundMessage(int newPoints, int totalScore, Scanner in, boolean includeTotalScore) {
-        System.out.println("This earns you an additional " + newPoints
-                + (includeTotalScore ? " points for a total score of " + totalScore : "points."));
+        if (includeTotalScore)
+            System.out.println(
+                    "This earns you an additional " + newPoints + " points for a total score of " + totalScore + ".");
+        else
+            System.out.println("This earns you " + newPoints + " points.");
         System.out.println();
         System.out.println("Press enter to continue...");
         in.nextLine();
@@ -369,8 +389,8 @@ class Round3 extends WordleRound {
 class Round4 extends WordleRound {
     Round4() {
         super("DOUBLE WORDLE",
-                "You have six tries to guess two 5-letter words. Each guess will be used on both words simultaneously.",
-                5);
+                "You have six tries to guess two 5-letter words. Each guess will be used on both words simultaneously. You will earn points for each answer you solve under the allocated number of attempts.",
+                5, 2);
     }
 
     @Override
@@ -442,23 +462,36 @@ class Round4 extends WordleRound {
             if (guess.equals(answer2))
                 answer2Solved = allGuesses.size();
             if (answer1Solved > 0 && answer2Solved > 0) {
-                System.out.println("Congrats, you solved both answers in " + allGuesses.size() + " guesses!");
                 break; // Exit when both answers are solved.
             }
+        }
+
+        final int numGuesses = 6;
+
+        // Print congrats message
+        if (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= numGuesses) {
+            // Both ansnwers are solved under the allowed number of guesses
+            System.out.println("Congrats, you found both answers in " + allGuesses.size() + " guesses!");
+        } else if (answer1Solved > 0 && answer1Solved <= numGuesses) {
+            System.out.println("Congrats, you found one answer in " + answer1Solved + " guesses!");
+        } else if (answer2Solved > 0 && answer2Solved <= numGuesses) {
+            System.out.println("Congrats, you found one answer in " + answer2Solved + " guesses!");
         }
 
         // Calculate score.
         int newPoints = 0;
         // Add points for each answer solved under the allowed number of guesses.
-        newPoints += (answer1Solved > 0 && answer1Solved <= 6) ? (int) Math.pow((7 - answer1Solved), 2) * 50
+        newPoints += (answer1Solved > 0 && answer1Solved <= numGuesses)
+                ? (int) Math.pow((numGuesses - answer1Solved + 1), 2) * 50
                 : 0;
-        newPoints += (answer2Solved > 0 && answer2Solved <= 6) ? (int) Math.pow((7 - answer2Solved), 2) * 50
+        newPoints += (answer2Solved > 0 && answer2Solved <= numGuesses)
+                ? (int) Math.pow((numGuesses - answer2Solved + 1), 2) * 50
                 : 0;
 
         // Add bonus points if both answers are solved under the allowed number of
         // guesses.
-        newPoints += (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= 6)
-                ? (int) Math.pow((7 - allGuesses.size()), 2) * 100
+        newPoints += (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= numGuesses)
+                ? (int) Math.pow((numGuesses - allGuesses.size() + 1), 2) * 100
                 : 0;
         int totalScore = prevScore + newPoints;
         printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);

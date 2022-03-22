@@ -5,22 +5,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class MyResult {
-    // Dummy data class to store the output of `mainWordle` method.
-    private final ArrayList<String> first;
-    private final boolean second;
+class WordleResult {
+    // Data class to store the output of `mainWordle` method.
+    private final ArrayList<String> allGuesses;
+    private final boolean successful;
 
-    public MyResult(ArrayList<String> first, boolean second) {
-        this.first = first;
-        this.second = second;
+    public WordleResult(ArrayList<String> allGuesses, boolean successful) {
+        this.allGuesses = allGuesses;
+        this.successful = successful;
     }
 
-    public ArrayList<String> getFirst() {
-        return first;
+    public ArrayList<String> getAllGuesses() {
+        return allGuesses;
     }
 
-    public boolean getSecond() {
-        return second;
+    public boolean getSuccessful() {
+        return successful;
     }
 }
 
@@ -182,13 +182,13 @@ abstract class WordleRound {
         return words;
     }
 
-    MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords) {
+    WordleResult mainWordle(Scanner in, String answer, ArrayList<String> allWords) {
         // Overload variant of `mainWordle` where the number of letters is simply the
         // length of the answer.
         return this.mainWordle(in, answer, allWords, answer.length());
     }
 
-    MyResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
+    WordleResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
         // This method carries out the logic of a single wordle game (the UI of the user
         // guessing.)
         boolean successful = false;
@@ -228,7 +228,7 @@ abstract class WordleRound {
             }
         }
 
-        return new MyResult(allGuesses, successful);
+        return new WordleResult(allGuesses, successful);
     }
 
     public static void printColoredWord(String guess, final String answer, boolean showAnimation) {
@@ -344,9 +344,9 @@ class Round1 extends WordleRound {
         final ArrayList<String> allWords = getWords("./wordlist_5_all.txt");
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
 
-        MyResult result = mainWordle(in, answer, allWords);
-        ArrayList<String> allGuesses = result.getFirst();
-        boolean successful = result.getSecond();
+        WordleResult result = mainWordle(in, answer, allWords);
+        ArrayList<String> allGuesses = result.getAllGuesses();
+        boolean successful = result.getSuccessful();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
         int totalScore = newPoints + prevScore;
@@ -366,9 +366,9 @@ class Round2 extends WordleRound {
         final ArrayList<String> allWords = getWords("./wordlist_4_all.txt");
         final String answer = words_possible_ansnwers.get((int) (Math.random() * words_possible_ansnwers.size()));
 
-        MyResult result = mainWordle(in, answer, allWords);
-        int newPoints = (result.getSecond() && result.getFirst().size() <= 6)
-                ? (int) Math.pow((7 - result.getFirst().size()), 2) * 100
+        WordleResult result = mainWordle(in, answer, allWords);
+        int newPoints = (result.getSuccessful() && result.getAllGuesses().size() <= 6)
+                ? (int) Math.pow((7 - result.getAllGuesses().size()), 2) * 100
                 : 0;
         int totalScore = prevScore + newPoints;
         printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
@@ -387,9 +387,9 @@ class Round3 extends WordleRound {
         final ArrayList<String> possibleAnswers = getWords("./wordlist_6_answers.txt");
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
 
-        MyResult result = mainWordle(in, answer, allWords);
-        ArrayList<String> allGuesses = result.getFirst();
-        boolean successful = result.getSecond();
+        WordleResult result = mainWordle(in, answer, allWords);
+        ArrayList<String> allGuesses = result.getAllGuesses();
+        boolean successful = result.getSuccessful();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
         int totalScore = prevScore + newPoints;
@@ -529,9 +529,9 @@ class Round5 extends WordleRound {
         final ArrayList<String> allWords = getWords("./wordlist_java_keywords.txt");
         final String answer = allWords.get((int) (Math.random() * allWords.size()));
 
-        MyResult result = mainWordle(in, answer, allWords, 0);
-        ArrayList<String> allGuesses = result.getFirst();
-        boolean successful = result.getSecond();
+        WordleResult result = mainWordle(in, answer, allWords, 0);
+        ArrayList<String> allGuesses = result.getAllGuesses();
+        boolean successful = result.getSuccessful();
 
         int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
         int totalScore = prevScore + newPoints;

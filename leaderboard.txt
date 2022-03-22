@@ -1,9 +1,11 @@
-Laura 1550
-Laura 900
-Laura 1600
-Laura 2200
-ahmed 1500
-SuLaMa 3000
-collen 800
-Laura 5000
-Laura 800
+Laura/1550
+Laura/900
+Laura/1600
+Laura/2200
+ahmed/1500
+SuLaMa/3000
+collen/800
+Laura/5000
+Laura/800
+Laura/200
+Laura/150

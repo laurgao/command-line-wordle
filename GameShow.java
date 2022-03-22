@@ -1,7 +1,7 @@
 // Laura Gao (342611589)
 // ICS4U1 - Mr. Anthony
 // March 12, 2022
-// This program is a game show where the user has to solve variations of the Wordle game to win points.
+// This program is a game show where the player has to solve variations of the Wordle game to win points.
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,11 +9,11 @@ import java.util.Scanner;
 
 public class GameShow {
     private static final WordleRound[] ROUNDS = {
-        new Round1(),
-        new Round2(),
-        new Round3(),
-        new Round4(),
-        new Round5(),
+            new Round1(),
+            new Round2(),
+            new Round3(),
+            new Round4(),
+            new Round5(),
     };
 
     public static void main(String[] args) {
@@ -40,6 +40,10 @@ public class GameShow {
                 + "Your final score is " + totalScore + " which gives you a ranking of #" + rank + "!");
         System.out.println("Enter your name to save your score to the leaderboard: ");
         String name = in.nextLine();
+        while (name.contains("/")) {
+            System.out.println("Invalid character '/' in name. Try again.");
+            name = in.nextLine();
+        }
         saveScore(name, totalScore);
         System.out.println();
         System.out.println("Thank you for playing, " + name + "! Press enter to return to the main menu.");
@@ -74,7 +78,7 @@ public class GameShow {
             FileWriter fw = new FileWriter("leaderboard.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw);
-            out.println(name + " " + score);
+            out.println(name + "/" + score);
             out.close();
         } catch (IOException e) {
             System.out.println();
@@ -126,10 +130,10 @@ public class GameShow {
 
             String s;
             while ((s = br.readLine()) != null) {
-                final String name = s.split(" ")[0];
+                final String name = s.split("/")[0];
                 final int score;
                 try {
-                    String scoreStr = s.split(" ")[1];
+                    String scoreStr = s.split("/")[1];
                     score = Integer.parseInt(scoreStr);
                 } catch (NumberFormatException e) {
                     // This is not a valid score, so we skip this line of the file.

@@ -52,12 +52,13 @@ abstract class WordleRound {
         System.out.println("ROUND " + roundIndex + ": " + this.getName());
         System.out.println();
         System.out.println(this.getDescription());
-        if (!skipRules)
+        if (!skipRules) {
             System.out.println(
                     "If you don't get the word in the allotted number of guesses, you will not get any points.");
-        System.out.println();
-        System.out.println(
-                "For your viewing pleasure, it is recommended that this game is played in a console whose background colour is dark.");
+            System.out.println();
+            System.out.println(
+                    "For your viewing pleasure, it is recommended that this game is played in a console whose background colour is dark.");
+        }
         System.out.println();
         if (!skipRules) {
             System.out.println();
@@ -222,7 +223,7 @@ abstract class WordleRound {
                 }
             } else {
                 // If the guess is longer than the answer, then we don't need to worry about any
-                // letter being Utils.GREEN.
+                // letter being green.
                 if (answer.contains(thisLetter + "")) {
                     if (guess.indexOf(thisLetter) == i) {
                         // This is the first occurance of this letter in the guess
@@ -383,19 +384,19 @@ class Round4 extends WordleRound {
 
         while (true) {
             Utils.VoidFunction recreateCurrentScreen = () -> {
-                boolean ans1solved = false;
-                boolean ans2solved = false;
+                boolean ans1Solved = false;
+                boolean ans2Solved = false;
                 for (int i = 0; i < allGuesses.size(); i++) {
-                    if (!ans1solved) {
+                    if (!ans1Solved) {
                         printColoredWord(allGuesses.get(i), answer1, false);
-                        ans1solved = answer1.equals(allGuesses.get(i));
+                        ans1Solved = answer1.equals(allGuesses.get(i));
                     } else {
-                        System.out.print("     ");
+                        System.out.print("     "); // Filler space for a 5-letter word
                     }
                     System.out.print(gap);
-                    if (!ans2solved) {
+                    if (!ans2Solved) {
                         printColoredWord(allGuesses.get(i), answer2, false);
-                        ans2solved = answer2.equals(allGuesses.get(i));
+                        ans2Solved = answer2.equals(allGuesses.get(i));
                     }
                     System.out.println();
                 }

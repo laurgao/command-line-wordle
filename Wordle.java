@@ -189,11 +189,11 @@ abstract class WordleRound {
     }
 
     WordleResult mainWordle(Scanner in, String answer, ArrayList<String> allWords, int numLetters) {
-        // This method carries out the logic of a single wordle game (the UI of the user
-        // guessing.)
+        // This method carries out the logic of a Wordle game with one answer (the UI of
+        // the user guessing.)
         boolean successful = false;
-        ArrayList<String> allGuesses = new ArrayList<String>(); // Store all guesses in a variable so we can print
-                                                                // them all out later.
+        // Store all guesses in a variable so we can print them all out later.
+        ArrayList<String> allGuesses = new ArrayList<String>();
         while (true) {
             String guess = this.getGuess(in, numLetters, allWords,
                     () -> {
@@ -331,6 +331,21 @@ abstract class WordleRound {
         return guess;
     }
 
+    int postprocessWordleResult(WordleResult result, int prevScore, boolean includeTotalScore, Scanner in) {
+        // This method calculates new score and finishes the round after a Wordle round
+        // is finished playing.
+        ArrayList<String> allGuesses = result.getAllGuesses();
+        boolean successful = result.getSuccessful();
+
+        // Calculate score based on number of guesses used
+        int newPoints = (successful && allGuesses.size() <= this.getNumGuesses())
+                ? (int) Math.pow((this.getNumGuesses() - allGuesses.size() + 1), 2) * 100
+                : 0;
+        int totalScore = newPoints + prevScore;
+        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
+        return totalScore;
+    }
+
 }
 
 class Round1 extends WordleRound {
@@ -345,13 +360,7 @@ class Round1 extends WordleRound {
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
 
         WordleResult result = mainWordle(in, answer, allWords);
-        ArrayList<String> allGuesses = result.getAllGuesses();
-        boolean successful = result.getSuccessful();
-
-        int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        int totalScore = newPoints + prevScore;
-        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
-        return totalScore;
+        return postprocessWordleResult(result, prevScore, includeTotalScore, in);
     }
 }
 
@@ -367,12 +376,7 @@ class Round2 extends WordleRound {
         final String answer = words_possible_ansnwers.get((int) (Math.random() * words_possible_ansnwers.size()));
 
         WordleResult result = mainWordle(in, answer, allWords);
-        int newPoints = (result.getSuccessful() && result.getAllGuesses().size() <= 6)
-                ? (int) Math.pow((7 - result.getAllGuesses().size()), 2) * 100
-                : 0;
-        int totalScore = prevScore + newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
-        return totalScore;
+        return postprocessWordleResult(result, prevScore, includeTotalScore, in);
     }
 }
 
@@ -388,13 +392,8 @@ class Round3 extends WordleRound {
         final String answer = possibleAnswers.get((int) (Math.random() * possibleAnswers.size()));
 
         WordleResult result = mainWordle(in, answer, allWords);
-        ArrayList<String> allGuesses = result.getAllGuesses();
-        boolean successful = result.getSuccessful();
+        return postprocessWordleResult(result, prevScore, includeTotalScore, in);
 
-        int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        int totalScore = prevScore + newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
-        return totalScore;
     }
 }
 
@@ -483,32 +482,30 @@ class Round4 extends WordleRound {
             }
         }
 
-        final int numGuesses = 6;
-
         // Print congrats message
-        if (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= numGuesses) {
+        if (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= this.getNumGuesses()) {
             // Both ansnwers are solved under the allowed number of guesses
             System.out.println("Congrats, you found both answers in " + allGuesses.size() + " guesses!");
-        } else if (answer1Solved > 0 && answer1Solved <= numGuesses) {
+        } else if (answer1Solved > 0 && answer1Solved <= this.getNumGuesses()) {
             System.out.println("Congrats, you found one answer in " + answer1Solved + " guesses!");
-        } else if (answer2Solved > 0 && answer2Solved <= numGuesses) {
+        } else if (answer2Solved > 0 && answer2Solved <= this.getNumGuesses()) {
             System.out.println("Congrats, you found one answer in " + answer2Solved + " guesses!");
         }
 
         // Calculate score.
         int newPoints = 0;
         // Add points for each answer solved under the allowed number of guesses.
-        newPoints += (answer1Solved > 0 && answer1Solved <= numGuesses)
-                ? (int) Math.pow((numGuesses - answer1Solved + 1), 2) * 50
+        newPoints += (answer1Solved > 0 && answer1Solved <= this.getNumGuesses())
+                ? (int) Math.pow((this.getNumGuesses() - answer1Solved + 1), 2) * 50
                 : 0;
-        newPoints += (answer2Solved > 0 && answer2Solved <= numGuesses)
-                ? (int) Math.pow((numGuesses - answer2Solved + 1), 2) * 50
+        newPoints += (answer2Solved > 0 && answer2Solved <= this.getNumGuesses())
+                ? (int) Math.pow((this.getNumGuesses() - answer2Solved + 1), 2) * 50
                 : 0;
 
         // Add bonus points if both answers are solved under the allowed number of
         // guesses.
-        newPoints += (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= numGuesses)
-                ? (int) Math.pow((numGuesses - allGuesses.size() + 1), 2) * 100
+        newPoints += (answer1Solved > 0 && answer2Solved > 0 && allGuesses.size() <= this.getNumGuesses())
+                ? (int) Math.pow((this.getNumGuesses() - allGuesses.size() + 1), 2) * 100
                 : 0;
         int totalScore = prevScore + newPoints;
         printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
@@ -530,12 +527,6 @@ class Round5 extends WordleRound {
         final String answer = allWords.get((int) (Math.random() * allWords.size()));
 
         WordleResult result = mainWordle(in, answer, allWords, 0);
-        ArrayList<String> allGuesses = result.getAllGuesses();
-        boolean successful = result.getSuccessful();
-
-        int newPoints = (successful && allGuesses.size() <= 6) ? (int) Math.pow((7 - allGuesses.size()), 2) * 100 : 0;
-        int totalScore = prevScore + newPoints;
-        printFinishedRoundMessage(newPoints, totalScore, in, includeTotalScore);
-        return totalScore;
+        return postprocessWordleResult(result, prevScore, includeTotalScore, in);
     }
 }

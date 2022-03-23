@@ -144,10 +144,9 @@ public class GameShow {
         Utils.prettyPrint("Wordle Game Show was designed and built by Laura Gao.");
         Utils.sleep(pause);
         System.out.println();
-        Utils.prettyPrint(
-                "Thank you to the following people for playtesting and for their valuable feedback: ", false);
+        Utils.prettyPrint("I would like to thank the following people for playtesting and for their valuable feedback: ", false);
         Utils.sleep(pause);
-        String names[] = { "Emma", "Colleen", "Ahmed", "Quan", "Susie", "Emily", "Gloria", "Rain" };
+        String names[] = { "Emma", "Colleen", "Ahmed", "Quan", "Susie", "Emily", "Gloria", "Rain", "my sister Angela", "my mom" };
         for (int i = 0; i < names.length - 1; i++) {
             Utils.prettyPrint(names[i] + ", ", false);
             Utils.sleep(250);

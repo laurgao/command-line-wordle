@@ -129,11 +129,8 @@ abstract class WordleRound {
                                             + " and press enter. Each letter will be highlighted either...");
                     System.out.println();
                     System.out.println(Utils.WHITE + "WHITE: this letter does not exist in the word.");
-                    System.out.println(
-                            Utils.ORANGE
-                                    + "ORANGE: this letter exists in the word but is not in the right location.");
-                    System.out.println(
-                            Utils.GREEN + "GREEN: this letter exists in the word and is in the right location.");
+                    System.out.println(Utils.ORANGE + "ORANGE: this letter exists in the word but is not in the right location.");
+                    System.out.println(Utils.GREEN + "GREEN: this letter exists in the word and is in the right location.");
                     System.out.println(Utils.RESET);
                     Utils.sleep(1000);
                     Utils.prettyPrint("Press enter to continue...");
@@ -152,14 +149,14 @@ abstract class WordleRound {
 
     // This method is called to play the round. It's the most important method that
     // child classes have to implement.
+    // Returns the total number of points earned by the player up to this round.
     abstract int play(Scanner in, int prevScore, boolean includeTotalScore);
 
     // The following are utility methods that may be used in the `play` method of
     // child class implementations.
     static void printFinishedRoundMessage(int newPoints, int totalScore, Scanner in, boolean includeTotalScore) {
         if (includeTotalScore)
-            System.out.println(
-                    "This earns you an additional " + newPoints + " points for a total score of " + totalScore + ".");
+            System.out.println("This earns you an additional " + newPoints + " points for a total score of " + totalScore + ".");
         else
             System.out.println("This earns you " + newPoints + " points.");
         System.out.println();
@@ -325,7 +322,7 @@ abstract class WordleRound {
             // Check that guess has correct number of characters
             if (wordLength > 0 && guess.length() != wordLength) {
                 Utils.clearScreen();
-                System.out.println(Utils.RED + "Please enter a word of length " + wordLength + "." + Utils.RESET);
+                System.out.println(Utils.RED + "Please enter a word with " + wordLength + " letters." + Utils.RESET);
                 System.out.println();
                 recreateCurrentScreen.run();
                 continue;
